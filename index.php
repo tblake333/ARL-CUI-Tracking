@@ -4,13 +4,13 @@
 
     $sql = 'SELECT * FROM cui_items';
 
-    $result = mysqli_query($conn, $sql);
+    $stmt = $pdo->query($sql);
 
-    $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-    mysqli_free_result($result);
-
-    mysqli_close($conn);
+    $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Close PDO connection
+    $stmt = null;
+    $pdo = null;
 ?>
 
 <!DOCTYPE html>

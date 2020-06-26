@@ -2,7 +2,7 @@
 
     include('config/db_connect.php');
 
-    $fields = ['title', 'type', 'source', 'source-date', 'location', 'description', 'barcode'];
+    $fields = ['title', 'type', 'source', 'source_date', 'location', 'description', 'barcode'];
     $entries = array();
     $errors = array();
 
@@ -30,7 +30,7 @@
                     if (!filter_var(strlen($data), FILTER_VALIDATE_INT, ["options" => ["min_range"=>0, "max_range"=>250]])) {
                         $errors[$field] = "Please enter a " . ucwords($field) . " with maximum 250 characters.";
                     }
-                } else if ($field == 'source-date') {
+                } else if ($field == 'source_date') {
                     $date = DateTime::createFromFormat('Y-m-d', $entries[$field]);
                     if (!$date || $date->format('Y-m-d') != $entries[$field]) {
                         $errors[$field] = "Please enter a valid date";
@@ -42,24 +42,26 @@
         if (array_filter($errors)) {
 
         } else {
-            foreach ($fields as $field) {
-                $entries[$field] = mysqli_real_escape_string($conn, $_POST[$field]);
-                if ($entries[$field] == '') {
-                    $entries[$field] = NULL;
-                }
-            }
 
             $sql = "INSERT INTO cui_items(barcode, title, type, source, source_date, location, description) 
-            VALUES('{$entries['barcode']}', '{$entries['title']}', '{$entries['type']}', '{$entries['source']}', 
-            '{$entries['source-date']}', '{$entries['location']}', '{$entries['description']}')";
+            VALUES(:barcode, :title, :type, :source, :source_date, :location, :description)";
 
-            if (mysqli_query($conn, $sql)) {
-                header('Location: index.php');
-            } else {
-                echo 'query error: ' . mysqli_error($conn);
+            try {
+                $stmt = $pdo->prepare($sql);
+            } catch (PDOException $err) {
+                echo 'prepare error! ' . $err->getMessage();
             }
 
+            print_r($entries);
+
+            if ($stmt->execute($entries)) {
+                header('Location: index.php');
+            } else {
+                echo 'query error! ' . $pdo->errorInfo();
+            }
         }
+        $pdo = null;
+        $stmt = null;
     }
 
     function isRequired($field) {
@@ -90,8 +92,8 @@
             <input type="text" name="source" value="<?php echo $entries['source'] ?>"> 
             <div class="red-text"><?php echo $errors['source'] ?></div>
             <label>Source Date:</label>
-            <input type="date" name="source-date" value="<?php echo $entries['source-date'] ?>">
-            <div class="red-text"><?php echo $errors['source-date'] ?></div>
+            <input type="date" name="source_date" value="<?php echo $entries['source_date'] ?>">
+            <div class="red-text"><?php echo $errors['source_date'] ?></div>
             <label>Location:</label>
             <input type="text" name="location" value="<?php echo $entries['location'] ?>">
             <div class="red-text"><?php echo $errors['location'] ?></div>

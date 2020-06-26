@@ -2,32 +2,28 @@
     include('config/db_connect.php');
 
     if (isset($_GET['id'])) {
-        $id = mysqli_real_escape_string($conn, $_GET['id']);
 
-        $sql = "SELECT * FROM cui_items WHERE id = $id";
-        
-        $result = mysqli_query($conn, $sql);
-        if (!$result) {
-            echo mysqli_error($conn);
-        }
+        $id = $_GET['id'];
+        $sql = "SELECT * FROM cui_items WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$id]);
+        $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $item = mysqli_fetch_assoc($result);
-
-        mysqli_free_result($result);
-        mysqli_close($conn);
+        $pdo = null;
+        $stmt = null;
     }
 
     if (isset($_POST['delete'])) {
-        $id = mysqli_real_escape_string($conn, $_POST['delete_id']);
+        $id = $_POST['delete_id'];
 
-        $sql = "DELETE FROM cui_items WHERE id = $id";
+        $sql = "DELETE FROM cui_items WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
 
-        if (mysqli_query($conn, $sql)) {
+        if($stmt->execute([$id])) {
             header('Location: index.php');
         } else {
-            echo 'query error: ' . mysqli_error($conn);
+            echo 'query error!';
         }
-
     }
 ?>
 
