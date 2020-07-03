@@ -2,67 +2,76 @@
 
 namespace App\Controllers;
 
+use App\Models\ItemModel;
 use CodeIgniter\Controller;
 
 class Items extends Controller {
 
-    private static $ADD_ITEM_RULES = [
-        'title' => [
-            'rules' => 'required|max_length[30]',
-            'errors' => [
-                'required' => 'A title is required.',
-                'max_length' => 'The title must not exceed 30 characters.'
-            ]
-        ],
-        'barcode' => [
-            'rules' => 'required|exact_length[10]',
-            'errors' => [
-                'required' => 'Please scan a barcode.',
-                'exact_length' => 'Please scan a valid barcode.'
-            ]
-        ],
-        'type' => [
-            'rules' => 'required|max_length[30]',
-            'errors' => [
-                'required' => 'A type is required.',
-                'max_length' => 'The type must not exceed 30 characters.'
-            ]
-        ],
-        'source' => [
-            'rules' => 'max_length[30]',
-            'errors' => [
-                'max_length' => 'The source must not exceed 30 characters.'
-            ]
-        ],
-        'location' => [
-            'rules' => 'required|max_length[30]',
-            'errors' => [
-                'required' => 'A location is required.',
-                'max_length' => 'The location must not exceed 30 characters.'
-            ]
-        ],
-        'description' => [
-            'rules' => 'max_length[250]',
-            'errors' => [
-                'max_length' => 'The title must not exceed 250 characters.'
-            ]
-        ]
-    ];
+    const ITEM_ADD_RULES_NAME = 'item_add';
 
     public function add() {
-        if ($this->request->getPost('source_date')) {
-            self::$ADD_ITEM_RULES['source_date'] = [
-                'rules' => 'valid_date[Y-m-d]',
-                'errors' => [
-                    'valid_date' => 'Enter a valid date.'
-                ]
-            ];
-        }
-        if (!$this->validate(self::$ADD_ITEM_RULES)) {
-            echo 'please validate';
+        if ($this->formSubmitted()) {
+
+            $validation = $this->validate(self::ITEM_ADD_RULES_NAME);
+            $entries = $this->getEntries();
+            if ($validation) {
+                // Validation success
+                $model = new ItemModel();
+                
+                $model->save([
+                    'barcode' => self::getValue($entries['barcode']),
+                    'title' => self::getValue($entries['title']),
+                    'type' => self::getValue($entries['type']),
+                    'source' => self::getValue($entries['source']),
+                    'source_date' => self::getValue($entries['source_date']),
+                    'location' => self::getValue($entries['location']),
+                    'description' => self::getValue($entries['description'])
+                ]);
+                echo 'success';
+            } else {
+                // Validation failed
+                echo view('add/Item', ['validation' => $this->validator, 'entries' => $entries]);
+            }
         } else {
-            echo 'success';
+            echo view('add/Item');
         }
-        echo view('add/Item', ['validation' => $this->validator]);
+    }
+
+    /**
+     * Determines whether form was submitted, or is being
+     * loaded for the first time.
+     * 
+     * @return boolean
+     */
+    private function formSubmitted() : bool {
+        return (boolean) $this->request->getPost();
+    }
+
+    /**
+     * Gets entries submitted from a form submission.
+     * 
+     * Note: This method should only be called AFTER form validation has been run.
+     * 
+     * @return array with field names as keys and field values as array values
+     */
+    private function getEntries() : array {
+        $entries = array();
+        foreach($this->request->getVar() as $field => $value) {
+            $entries[$field] = $value;
+        }
+        return $entries;
+    }
+
+    /**
+     * Function to get value of an input field.
+     * 
+     * Useful for inserting null values into the database instead of
+     * empty strings.
+     * 
+     * @return mixed value of field if not empty, null otherwise.
+     * 
+     */
+    private static function getValue(string $field) {
+        return empty($field) ? null : $field;
     }
 }
