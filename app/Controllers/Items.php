@@ -7,18 +7,18 @@ use CodeIgniter\Controller;
 
 class Items extends Controller {
 
-    const ITEM_ADD_RULES_NAME = 'item_add';
+    const ITEM_ADD_RULES_NAME = 'item';
 
     public function add() {
         if ($this->formSubmitted()) {
 
             $validation = $this->validate(self::ITEM_ADD_RULES_NAME);
-            $entries = $this->getEntries();
+            $entries = $this->request->getVar();
             if ($validation) {
                 // Validation success
                 $model = new ItemModel();
                 
-                $model->save([
+                $model->insert([
                     'barcode' => self::getValue($entries['barcode']),
                     'title' => self::getValue($entries['title']),
                     'type' => self::getValue($entries['type']),
@@ -45,21 +45,6 @@ class Items extends Controller {
      */
     private function formSubmitted() : bool {
         return (boolean) $this->request->getPost();
-    }
-
-    /**
-     * Gets entries submitted from a form submission.
-     * 
-     * Note: This method should only be called AFTER form validation has been run.
-     * 
-     * @return array with field names as keys and field values as array values
-     */
-    private function getEntries() : array {
-        $entries = array();
-        foreach($this->request->getVar() as $field => $value) {
-            $entries[$field] = $value;
-        }
-        return $entries;
     }
 
     /**

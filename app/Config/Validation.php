@@ -34,7 +34,7 @@ class Validation
 	// Rules
 	//--------------------------------------------------------------------
 
-	public $item_add = [
+	public $item = [
         'title' => [
             'rules' => 'required|max_length[30]',
             'errors' => [
