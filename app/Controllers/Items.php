@@ -5,20 +5,28 @@ namespace App\Controllers;
 use App\Models\ItemModel;
 use CodeIgniter\Controller;
 
-class Items extends Controller {
+class Items extends BaseController {
 
-    const ITEM_ADD_RULES_NAME = 'item';
+    /**
+     * Name of variable defined in app/Config/Validation.php stating
+     * the rules necessary to add or modify a CUI item.
+     * 
+     * @var string
+     */
+    const ITEM_RULES_NAME = 'item';
 
     public function add() {
+
         if ($this->formSubmitted()) {
 
-            $validation = $this->validate(self::ITEM_ADD_RULES_NAME);
+            $isValid = $this->validate(self::ITEM_RULES_NAME);
             $entries = $this->request->getVar();
-            if ($validation) {
+
+            if ($isValid) {
                 // Validation success
-                $model = new ItemModel();
+                $itemModel = new ItemModel();
                 
-                $model->insert([
+                $itemModel->insert([
                     'barcode' => self::getValue($entries['barcode']),
                     'title' => self::getValue($entries['title']),
                     'type' => self::getValue($entries['type']),
@@ -35,16 +43,6 @@ class Items extends Controller {
         } else {
             echo view('add/Item');
         }
-    }
-
-    /**
-     * Determines whether form was submitted, or is being
-     * loaded for the first time.
-     * 
-     * @return boolean
-     */
-    private function formSubmitted() : bool {
-        return (boolean) $this->request->getPost();
     }
 
     /**
