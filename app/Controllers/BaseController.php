@@ -43,4 +43,13 @@ class BaseController extends Controller
 		// $this->session = \Config\Services::session();
 	}
 
+	/**
+	 * Determines whether form was submitted or is being loaded
+	 * for the first time.
+	 * 
+	 * @return boolean
+	 */
+	protected function formSubmitted() : bool {
+		return (boolean) $this->request->getPost();
+	}
 }

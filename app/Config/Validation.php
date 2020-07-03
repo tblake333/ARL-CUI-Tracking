@@ -34,6 +34,11 @@ class Validation
 	// Rules
 	//--------------------------------------------------------------------
 
+    /**
+     * Rules for adding or updating a CUI item.
+     * 
+     * @var array
+     */
 	public $item = [
         'title' => [
             'rules' => 'required|max_length[30]',
@@ -83,5 +88,38 @@ class Validation
                 'max_length' => 'The title must not exceed 250 characters.'
             ]
         ]
+    ];
+
+    /**
+     * Rules for adding or updating a user
+     * 
+     * @var array
+     */
+    public $user = [
+        'badge_number' => [
+            'rules' => 'required|numeric|exact_length[6]|is_unique[users.badge_number]',
+            'errors' => [
+                'required' => 'A badge number is required.',
+                'numeric' => 'Badge number must contain only numerical digits.',
+                'exact_length' => 'Badge number must contain exactly 6 digits.',
+                'is_unique' => 'Badge number is taken by another user.'
+            ]
+        ],
+        'first_name' => [
+            'rules' => 'required|alpha|max_length[70]',
+            'errors' => [
+                'required' => 'First name required.',
+                'alpha' => 'First name must contain only alphabetic characters',
+                'max_length' => 'First name must not exceed 70 characters'
+            ]
+        ],
+        'last_name' => [
+            'rules' => 'required|alpha|max_length[70]',
+            'errors' => [
+                'required' => 'Last name required.',
+                'alpha' => 'Last name must contain only alphabetic characters',
+                'max_length' => 'Last name must not exceed 70 characters'
+            ]
+        ],
     ];
 }
