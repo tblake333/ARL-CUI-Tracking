@@ -1,6 +1,7 @@
 const BARCODE = {
     PREFIX: ["Shift", "C", "Shift", "U", "Shift", "I"],
     // LENGTH does not include terminator key
+    // Ex. 'CUI0001234'
     LENGTH: 10,
     TERMINATOR: "Enter"
 };
@@ -125,6 +126,7 @@ function correctCaretPosition() {
         field.value = stringBeforeBarcode + stringAfterBarcode;
         field.selectionStart = caretPosition - BARCODE.LENGTH;
         field.selectionEnd = caretPosition - BARCODE.LENGTH;
+        field.dispatchEvent(new CustomEvent('otherChange'));
     } else if (isDateInputField(field)) {
         field.value = '';
         field.focus();
@@ -142,6 +144,7 @@ function isDateInputField(field) {
 function setBarcodeInputValue() {
     var barcodeInput = document.getElementById('barcode-input');
     barcodeInput.value = barcode;
+    barcodeInput.dispatchEvent(new CustomEvent('otherChange'));
 }
 
 function reset() {
