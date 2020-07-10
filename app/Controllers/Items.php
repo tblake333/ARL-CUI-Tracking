@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ItemModel;
 use CodeIgniter\Controller;
 
+// TODO: Add confirmation page for adding item
 class Items extends BaseController {
 
     /**
@@ -19,8 +20,22 @@ class Items extends BaseController {
 
         if ($this->formSubmitted()) {
 
-            $isValid = $this->validate(self::ITEM_RULES_NAME);
             $entries = $this->request->getVar();
+
+            $validation = \Config\Services::validation();
+            $rules = $validation->getRuleGroup(self::ITEM_RULES_NAME);
+
+            if (isset($entries['owner'])) {
+                // Check if owner badge number is new to users database
+                $isNew = (new \CodeIgniter\Validation\Rules())->is_unique($entries['owner'], 'users.badge_number', $entries);
+                if ($isNew) {
+                    // Update validation rules so first and last name are required
+                    $rules['first_name']['rules'] = 'required|alpha|max_length[70]';
+                    $rules['last_name']['rules'] = 'required|alpha|max_length[70]';
+                }
+            }
+
+            $isValid = $this->validate($rules);
 
             if ($isValid) {
                 // Validation success
@@ -30,10 +45,13 @@ class Items extends BaseController {
                     'barcode' => self::getValue($entries['barcode']),
                     'title' => self::getValue($entries['title']),
                     'type' => self::getValue($entries['type']),
+                    'owner' => self::getValue($entries['owner']),
                     'source' => self::getValue($entries['source']),
                     'source_date' => self::getValue($entries['source_date']),
                     'location' => self::getValue($entries['location']),
-                    'description' => self::getValue($entries['description'])
+                    'description' => self::getValue($entries['description']),
+                    // TODO: sanitize keywords
+                    'keywords' => self::getValue($entries['keywords'])
                 ]);
                 echo 'success';
             } else {

@@ -64,6 +64,30 @@ class Validation
                 'max_length' => 'The type must not exceed 30 characters.'
             ]
         ],
+        'owner' => [
+            'rules' => 'required|numeric|max_length[6]',
+            'errors' => [
+                'required' => 'A badge number is required.',
+                'numeric' => 'Badge number must contain only numerical digits.',
+                'max_length' => 'Badge number must not exceed 6 digits.'
+            ]
+        ],
+        'first_name' => [
+            'rules' => 'permit_empty|alpha|max_length[70]',
+            'errors' => [
+                'required' => 'First name required.',
+                'alpha' => 'First name must contain only alphabetic characters',
+                'max_length' => 'First name must not exceed 70 characters'
+            ]
+        ],
+        'last_name' => [
+            'rules' => 'permit_empty|alpha|max_length[70]',
+            'errors' => [
+                'required' => 'Last name required.',
+                'alpha' => 'Last name must contain only alphabetic characters',
+                'max_length' => 'Last name must not exceed 70 characters'
+            ]
+        ],
         'source' => [
             'rules' => 'max_length[30]',
             'errors' => [
@@ -87,6 +111,13 @@ class Validation
             'rules' => 'max_length[250]',
             'errors' => [
                 'max_length' => 'The title must not exceed 250 characters.'
+            ]
+        ],
+        'keywords' => [
+            'rules' => 'permit_empty|max_length[40]|regex_match[/(\w+[,\s]*)+/]',
+            'errors' => [
+                'max_length' => 'List of keywords must not exceed 40 characters',
+                'regex_match' => 'Keywords must be separated by commas or spaces'
             ]
         ]
     ];
