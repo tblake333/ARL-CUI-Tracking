@@ -5,6 +5,9 @@
         .brand {
             background: #4288cf !important;
         }
+        .cancel {
+            background: #c23c32 !important;
+        }
         .brand-text {
             color: #4288cf !important;
         }
@@ -12,6 +15,11 @@
             max-width: 460px;
             margin: 20px auto;
             padding: 20px;
+        }
+        textarea {
+            border: none;
+            border-bottom: 1px solid #9e9e9e;
+            transition: box-shadow .3s, border .3s, -webkit-box-shadow .3s;
         }
     </style>
 </head>
