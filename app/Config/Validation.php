@@ -16,7 +16,8 @@ class Validation
 		\CodeIgniter\Validation\Rules::class,
 		\CodeIgniter\Validation\FormatRules::class,
 		\CodeIgniter\Validation\FileRules::class,
-		\CodeIgniter\Validation\CreditCardRules::class,
+        \CodeIgniter\Validation\CreditCardRules::class,
+        \App\Validation\MovementRules::class,
 	];
 
 	/**
@@ -97,11 +98,11 @@ class Validation
      */
     public $user = [
         'badge_number' => [
-            'rules' => 'required|numeric|exact_length[6]|is_unique[users.badge_number]',
+            'rules' => 'required|numeric|max_length[6]|is_unique[users.badge_number]',
             'errors' => [
                 'required' => 'A badge number is required.',
                 'numeric' => 'Badge number must contain only numerical digits.',
-                'exact_length' => 'Badge number must contain exactly 6 digits.',
+                'max_length' => 'Badge number must not exceed 6 digits.',
                 'is_unique' => 'Badge number is taken by another user.'
             ]
         ],
@@ -121,5 +122,58 @@ class Validation
                 'max_length' => 'Last name must not exceed 70 characters'
             ]
         ],
+    ];
+
+    /**
+     * Rules for checking out a CUI item
+     * 
+     * @var array
+     */
+    public $checkout = [
+        'barcode' => [
+            'rules' => 'required|exact_length[10]|is_not_unique[items.barcode]|is_checked_in',
+            'errors' => [
+                'required' => 'Please scan a barcode.',
+                'exact_length' => 'Please scan a valid barcode.',
+                'is_not_unique' => 'Item barcode not found.',
+                'is_checked_in' => 'Item is already checked out.'
+            ]
+        ],
+        'badge_number' => [
+            'rules' => 'required|numeric|max_length[6]',
+            'errors' => [
+                'required' => 'A badge number is required.',
+                'numeric' => 'Badge number must contain only numerical digits.',
+                'max_length' => 'Badge number must not exceed 6 digits.'
+            ]
+        ],
+        'first_name' => [
+            'rules' => 'permit_empty|alpha|max_length[70]',
+            'errors' => [
+                'required' => 'First name required.',
+                'alpha' => 'First name must contain only alphabetic characters',
+                'max_length' => 'First name must not exceed 70 characters'
+            ]
+        ],
+        'last_name' => [
+            'rules' => 'permit_empty|alpha|max_length[70]',
+            'errors' => [
+                'required' => 'Last name required.',
+                'alpha' => 'Last name must contain only alphabetic characters',
+                'max_length' => 'Last name must not exceed 70 characters'
+            ]
+        ]
+    ];
+
+    public $checkin = [
+        'barcode' => [
+            'rules' => 'required|exact_length[10]|is_not_unique[items.barcode]|is_checked_out',
+            'errors' => [
+                'required' => 'Please scan a barcode.',
+                'exact_length' => 'Please scan a valid barcode.',
+                'is_not_unique' => 'Item barcode not found.',
+                'is_checked_in' => 'Item is already checked in.'
+            ]
+        ]
     ];
 }
