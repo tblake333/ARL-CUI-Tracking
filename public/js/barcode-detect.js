@@ -45,7 +45,7 @@ function barcodeListener(e) {
             if (isTerminatorKey(key)) {
                 correctCaretPosition();
                 // Reached barcode terminator key, finished reading barcode
-                alert("Barcode: " + barcode);
+                // alert("Barcode: " + barcode);
                 setBarcodeInputValue();
                 // Reset barcode and prefix to read a new barcode if necessary
                 reset();

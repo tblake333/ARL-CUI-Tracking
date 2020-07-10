@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\ItemModel;
+use App\Models\MovementModel;
 use CodeIgniter\RESTful\ResourceController;
 
 class API extends ResourceController {
@@ -24,7 +25,14 @@ class API extends ResourceController {
         $barcode = $this->request->getVar('barcode');
         if ($barcode) {
             $itemModel = new ItemModel();
-            return $this->respond($itemModel->where('barcode', $barcode)->first());
+            $movementModel = new MovementModel();
+
+            $item = $itemModel->where('barcode', $barcode)->first();
+            if ($item) {
+                $item['status'] = $movementModel->getItemStatus($barcode);
+            }
+
+            return $this->respond($item);
         } else {
             return redirect()->to('/');
         }
