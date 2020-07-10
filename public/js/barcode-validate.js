@@ -2,15 +2,22 @@ const barcodeInput = document.getElementById('barcode-input');
 
 barcodeInput.addEventListener('otherChange', checkForBarcode);
 
+document.addEventListener('onload', checkForBarcode.call(barcodeInput));
+
 function checkForBarcode(e) {
     let xhr = new XMLHttpRequest();
     let barcodeDetails = document.getElementById('barcode_details');
     if (this.value.length === 10) {
         xhr.onload = function() {
             if (this.status === 200) {
-                document.getElementById('barcode_error').innerText = '';
                 // TODO: Handle this
                 let barcode = JSON.parse(this.responseText);
+                let movementType = getMovementType();
+                if (barcode.status !== movementType) {
+                    document.getElementById('barcode_error').innerText = '';
+                } else {
+                    document.getElementById('barcode_error').innerText = 'Item is already checked ' + movementType + '.';
+                }
                 removeChildren(barcodeDetails);
                 loadBarcodeDetails(barcodeDetails, barcode);
             } else {
@@ -23,9 +30,15 @@ function checkForBarcode(e) {
     }
 }
 
+function getMovementType() {
+    // TODO: Clean this
+    let title = document.getElementsByTagName('h4')[0].innerText;
+    let type = title.split(' ');
+    return type[0].split('-')[1];
+}
+
 function removeChildren(container) {
     while(container.hasChildNodes()) {
-        console.log('removing ' + container.lastChild + ' from ' + container.id)
         container.removeChild(container.lastChild);
     }
 }
@@ -33,7 +46,7 @@ function removeChildren(container) {
 function loadBarcodeDetails(container, barcode) {
 
     let barcodeDetailsTitle = document.createElement('h6');
-    barcodeDetailsTitle.innerText = 'Item details:';
+    barcodeDetailsTitle.innerText = 'Item Details';
 
     let titleLabel = document.createElement('label');
     let typeLabel = document.createElement('label');
