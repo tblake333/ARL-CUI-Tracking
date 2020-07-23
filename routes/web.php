@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    // TODO: Go to menu
     return view('welcome');
 });
 
@@ -33,6 +34,8 @@ Route::patch('/items/{item}', 'ItemController@update');
 Route::get('/users', 'UserController@index');
 Route::get('/users/create', 'UserController@create');
 Route::post('/users', 'UserController@store');
+Route::get('/users/{user}', 'UserController@show');
+// TODO: Consider editing users
 
 /**
  * Movement Routes

@@ -7,19 +7,20 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index() {
-
+    public function index()
+    {
         $users = User::all();
 
         return view('user.index', compact('users'));
     }
 
-    public function create() {
+    public function create()
+    {
         return view('user.create');
     }
 
-    public function store() {
-
+    public function store()
+    {
         $data = request()->validate([
             'badge_number' => 'required|integer|digits_between:1,6|unique:users,badge_number',
             'first_name' => 'required|alpha|max:70',
@@ -30,4 +31,10 @@ class UserController extends Controller
 
         return redirect('/users');
     }
+
+    public function show(User $user)
+    {
+        return view('user.show', compact('user'));
+    }
+
 }

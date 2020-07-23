@@ -8,7 +8,7 @@
     
     @forelse($users as $user)
 
-        <p>{{ $user->first_name }}</p>
+        <p><a href="/users/{{ $user->badge_number }}">{{ $user->first_name }}</a></p>
 
     @empty
 
