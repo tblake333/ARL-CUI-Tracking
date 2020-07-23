@@ -122,4 +122,9 @@ class Item extends Model
     {
         return $this->hasMany(Movement::class, 'barcode', 'barcode');
     }
+
+    public function changes()
+    {
+        return $this->hasMany(Change::class, 'barcode', 'barcode');
+    }
 }
