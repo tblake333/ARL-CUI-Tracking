@@ -9,49 +9,50 @@ use Illuminate\Validation\Rule;
 
 class ItemController extends Controller
 {
-    public function index() {
-
+    public function index()
+    {
         $items = Item::all();
 
         return view('item.index', compact('items'));
     }
 
-    public function create() {
+    public function create()
+    {
         $item = new Item();
 
         return view('item.create', compact('item'));
     }
 
-    public function store() {
-        
+    public function store()
+    {
         $data = $this->validatedData();
 
         Item::create($data);
 
         return redirect('/items');
-
     }
 
-    public function show(Item $item) {
+    public function show(Item $item)
+    {
         return view('item.show', compact('item'));
     }
 
-    public function edit(Item $item) {
+    public function edit(Item $item)
+    {
         return view('item.edit', compact('item'));
     }
 
-    public function update(Item $item) {
-        
+    public function update(Item $item)
+    {
         $data = $this->validatedData($item);
 
         $item->update($data);
 
         return redirect('/items');
-
     }
 
-    protected function validatedData(Item $item = null) {
-
+    protected function validatedData(Item $item = null)
+    {
         $request = request();
 
         $rules = [
@@ -61,14 +62,12 @@ class ItemController extends Controller
             'owner.badge_number' => 'required|integer|digits_between:1,6',
             'owner.first_name' => [
                 Rule::requiredIf(function () use ($request) {
-                    $owner = User::find($request->owner['badge_number']);
-                    return !(bool)$owner;
+                    return $this->isNewUser($request->badge_number);
                 }), 'max:70'
             ],
             'owner.last_name' => [
                 Rule::requiredIf(function () use ($request) {
-                    $owner = User::find($request->owner['badge_number']);
-                    return !(bool)$owner;
+                    return $this->isNewUser($request->badge_number);
                 }), 'max:70'
             ],
             'source' => 'max:30',
@@ -80,10 +79,26 @@ class ItemController extends Controller
 
         if ($item) {
             $rules['barcode'] = $rules['barcode'] . ',' . $item->id;
-            $rules['badge_number'] = 'required|integer|digits_between:1,6';
+            $rules['edited_by.badge_number'] = 'required|integer|digits_between:1,6';
+            $rules['edited_by.first_name'] = [
+                Rule::requiredIf(function () use ($request) {
+                    return $this->isNewUser($request->badge_number);
+                }), 'max:70'
+            ];
+            $rules['edited_by.last_name'] = [
+                Rule::requiredIf(function () use ($request) {
+                    return $this->isNewUser($request->badge_number);
+                }), 'max:70'
+            ];
         }
 
         return request()->validate($rules);
+    }
+
+    private function isNewUser($badgeNumber)
+    {
+        $owner = User::find($badgeNumber);
+        return !(bool)$owner;
     }
 
 }

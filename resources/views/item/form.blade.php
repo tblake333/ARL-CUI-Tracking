@@ -12,9 +12,11 @@
 
 <div>
     <label for="owner[badge_number]">Owner</label>
-    <input type="text" name="owner[badge_number]" id="badge_number" autocomplete="off" value="{{ old('owner[badge_number]') }}">
-    @error('owner[badge_number]') <p>{{ $message }}</p> @enderror
+    <input type="text" name="owner[badge_number]" id="badge_number" autocomplete="off" value="{{ old('owner[badge_number]') ?? $item->owner_badge_number }}">
+    @error('owner.badge_number') <p>{{ $message }}</p> @enderror
 </div>
+
+<!-- TODO: Display owner details (first and last name) -->
 
 <div>
     <label for="Source">Source</label>
