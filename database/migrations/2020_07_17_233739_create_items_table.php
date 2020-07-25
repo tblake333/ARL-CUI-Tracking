@@ -26,6 +26,8 @@ class CreateItemsTable extends Migration
             $table->string('description', 250)->nullable();
             $table->string('keywords', 40)->nullable();
             $table->timestamps();
+
+            // TODO: Fix timezones
             
             $table->foreign('owner_badge_number')->references('badge_number')->on('users')->onUpdate('cascade');
         });

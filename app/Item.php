@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\ItemEditedEvent;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 
@@ -125,6 +126,6 @@ class Item extends Model
 
     public function changes()
     {
-        return $this->hasMany(Change::class, 'barcode', 'barcode');
+        return $this->hasMany(Change::class, 'item_id', 'id');
     }
 }

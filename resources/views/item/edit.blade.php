@@ -14,8 +14,8 @@
 
         <div>
             <label for="keywords">Badge Number</label>
-            <input type="text" name="badge_number" autocomplete="off" value="{{ old('badge_number') }}">
-            @error('badge_number') <p>{{ $message }}</p> @enderror
+            <input type="text" name="edited_by[badge_number]" autocomplete="off" value="{{ old('badge_number') }}">
+            @error('edited_by.badge_number') <p>{{ $message }}</p> @enderror
         </div>
 
         <button>Save item</button>

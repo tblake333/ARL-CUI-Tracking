@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ItemEditedEvent;
 use App\Item;
 use App\User;
 use Illuminate\Http\Request;
@@ -45,8 +46,15 @@ class ItemController extends Controller
     public function update(Item $item)
     {
         $data = $this->validatedData($item);
+        $item->fill($data);
+        
+        $userData = $data['edited_by'];
+        $user = User::firstOrCreate($userData);
 
-        $item->update($data);
+        // Dispatch item edited event to track changes
+        event(new ItemEditedEvent($item, $user));
+        
+        $item->save();
 
         return redirect('/items');
     }
@@ -55,21 +63,16 @@ class ItemController extends Controller
     {
         $request = request();
 
+        $ownerBadgeNumber = $request->owner ? $request->owner['badge_number'] : null;
+        $editedByBadgeNumber = $request->edited_by ? $request->edited_by['badge_number'] : null;
+
         $rules = [
             'title' => 'required|max:30',
             'barcode' => 'required|max:10|unique:items,barcode',
             'type' => 'required|max:30',
             'owner.badge_number' => 'required|integer|digits_between:1,6',
-            'owner.first_name' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $this->isNewUser($request->badge_number);
-                }), 'max:70'
-            ],
-            'owner.last_name' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $this->isNewUser($request->badge_number);
-                }), 'max:70'
-            ],
+            'owner.first_name' => [$this->requiredIfNewUser($ownerBadgeNumber), 'max:70'],
+            'owner.last_name' => [$this->requiredIfNewUser($ownerBadgeNumber), 'max:70'],
             'source' => 'max:30',
             'source_date' => 'nullable|date_format:Y-m-d',
             'location' => 'required|max:30',
@@ -80,19 +83,25 @@ class ItemController extends Controller
         if ($item) {
             $rules['barcode'] = $rules['barcode'] . ',' . $item->id;
             $rules['edited_by.badge_number'] = 'required|integer|digits_between:1,6';
-            $rules['edited_by.first_name'] = [
-                Rule::requiredIf(function () use ($request) {
-                    return $this->isNewUser($request->badge_number);
-                }), 'max:70'
-            ];
-            $rules['edited_by.last_name'] = [
-                Rule::requiredIf(function () use ($request) {
-                    return $this->isNewUser($request->badge_number);
-                }), 'max:70'
-            ];
+            $rules['edited_by.first_name'] = [$this->requiredIfNewUser($editedByBadgeNumber), 'max:70'];
+            $rules['edited_by.last_name'] = [$this->requiredIfNewUser($editedByBadgeNumber), 'max:70'];
         }
 
         return request()->validate($rules);
+    }
+
+    /**
+     * Returns RequiredIf Rule if badge number corresponds to a new user.
+     * 
+     * @param int $badgeNumber
+     * 
+     * @return \Illuminate\Validation\Rules\RequiredIf
+     */
+    private function requiredIfNewUser($badgeNumber)
+    {
+        return Rule::requiredIf(function () use ($badgeNumber) {
+            return $this->isNewUser($badgeNumber);
+        });
     }
 
     private function isNewUser($badgeNumber)

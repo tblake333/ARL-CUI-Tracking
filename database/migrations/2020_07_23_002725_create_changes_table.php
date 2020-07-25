@@ -14,14 +14,15 @@ class CreateChangesTable extends Migration
     public function up()
     {
         Schema::create('changes', function (Blueprint $table) {
-            $table->string('barcode', 10);
+            $table->id();
+            $table->foreignId('item_id');
             $table->mediumInteger('badge_number')->unsigned();
-            $table->timestamp('time');
+            $table->timestamp('time')->useCurrent();
             $table->string('field');
             $table->string('old');
             $table->string('new');
 
-            $table->foreign('barcode')->references('barcode')->on('items');
+            $table->foreign('item_id')->references('id')->on('items');
             $table->foreign('badge_number')->references('badge_number')->on('users');
         });
     }

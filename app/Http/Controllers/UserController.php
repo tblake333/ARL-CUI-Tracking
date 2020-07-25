@@ -23,8 +23,8 @@ class UserController extends Controller
     {
         $data = request()->validate([
             'badge_number' => 'required|integer|digits_between:1,6|unique:users,badge_number',
-            'first_name' => 'required|alpha|max:70',
-            'last_name' => 'required|alpha|max:70'
+            'first_name' => 'required|max:70',
+            'last_name' => 'required|max:70'
         ]);
 
         User::create($data);

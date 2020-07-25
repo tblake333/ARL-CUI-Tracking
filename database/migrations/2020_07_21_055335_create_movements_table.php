@@ -20,7 +20,7 @@ class CreateMovementsTable extends Migration
             $table->enum('type', ['in', 'out']);
             $table->timestamp('time')->useCurrent();
 
-            $table->foreign('barcode')->references('barcode')->on('items');
+            $table->foreign('barcode')->references('barcode')->on('items')->onUpdate('cascade');
             $table->foreign('badge_number')->references('badge_number')->on('users');
         });
     }
