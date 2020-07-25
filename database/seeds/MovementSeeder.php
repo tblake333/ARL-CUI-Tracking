@@ -14,27 +14,32 @@ class MovementSeeder extends Seeder
     public function run()
     {
         $users = User::all();
-        $items = factory(Item::class, 10)->create();
-
-        foreach ($items as $item) {
-            $randomlySelectedUsers = $users->random(mt_rand(0, $users->count()/10));
-            $this->createMovements($item, $randomlySelectedUsers);
-        }
+        $items = Item::all();
+        
+        $this->createMovements($items, $users, 200);
     }
 
     /**
      * Simulate movements for an item
      * 
-     * @param App\Item $item
-     * @param array $users
+     * @param $items
+     * @param $users
+     * @param int $amount
      * 
      * @return void
      */
-    private function createMovements($item, $users)
+    private function createMovements($items, $users, $amount)
     {
-        foreach($users as $user) {
-            $item->checkOut($user);
-            $item->checkIn();
+        for ($i = 0; $i < $amount; $i++) {
+            $item = $items->random();
+
+            if ($item->getStatus() === 'in') {
+                $user = $users->random();
+                $item->checkOut($user);
+            } else {
+                $item->checkIn();
+            }
+
         }
     }
 }
