@@ -2,9 +2,9 @@
 
 namespace App;
 
-use App\Events\ItemEditedEvent;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Model representing an item
@@ -14,6 +14,26 @@ use Illuminate\Database\Eloquent\Model;
 class Item extends Model
 {
     protected $fillable = ['title', 'barcode', 'type', 'source', 'owner', 'source_date', 'location', 'description', 'keywords'];
+
+    /**
+     * Basic search function
+     * 
+     * Searches through all fields
+     * 
+     * @param string $value to be searched
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public static function search($value)
+    {
+        $builder = self::query();
+
+        foreach (Schema::getColumnListing('items') as $field) {
+            $builder->orWhere($field, 'like', $value);
+        }
+
+        return $builder->get();
+    }
 
     /**
      * Method to check-out item
