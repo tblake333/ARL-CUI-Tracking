@@ -1,8 +1,114 @@
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+// // Fonts
+// @import url('https://fonts.googleapis.com/css?family=Nunito');
 
-// Variables
-@import 'variables';
+// // Variables
+// @import 'variables';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+// // Bootstrap
+// @import '~bootstrap/scss/bootstrap';
+
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap);
+
+body {
+  background-color: #020327;
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/*
+ * Navigation styles
+ */
+
+@import 'navigation';
+
+
+/*
+ *  Form styles
+ */
+
+form {
+  max-width: 500px;
+  margin: 50px auto;
+}
+
+form input {
+  max-width: 100%;
+  line-height: 90px;
+  outline: 0;
+  border: 0;
+  padding: 0;
+  border-bottom: 8px solid #85FFC7;
+  margin-bottom: 40px;
+  font-size: 80px;
+  background-color: transparent;
+  font-family: inherit;
+  color: #85FFC7; 
+}
+
+form input:placeholder-shown {
+  opacity: 0.4;
+}
+
+form input:focus {
+  opacity: 1;
+}
+
+form input:valid {
+  opacity: 1;
+}
+
+form input:invalid {
+  color: rgba(133, 255, 199, 0.4);
+  border-bottom-color: #BB0A21;
+  box-shadow: none;
+}
+
+form input:invalid:placeholder-shown {
+  border-bottom-color: #85FFC7;
+}
+
+form input::placeholder {
+  opacity: 0.4;
+}
+
+.invalid {
+  border-bottom-color: #BB0A21 !important;
+}
+
+form input:valid, form input:invalid, form input:focus, form input:required {
+  transition: color 0.5s ease, border-bottom-color 0.5s ease, opacity 0.5s ease;
+}
+
+label {
+  display: block;
+  color: #85FFC7;
+}
+
+.center {
+  text-align: center;
+}
+
+button {
+  margin-top: 40px;
+  border: 0;
+  outline: 0;
+  font-family: inherit;
+  font-size: 18px;
+  width: 50%;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #F9DC5C;
+  color: #1F2041;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #85FFC7;
+  font-size: 20px;
+}
+
+button, button:hover {
+  transition: background-color 1s ease, font-size 1s ease;
+}
