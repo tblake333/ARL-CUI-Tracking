@@ -59,6 +59,18 @@ class ItemController extends Controller
         return redirect('/items');
     }
 
+    public function search()
+    {
+        return view('item.search');
+    }
+
+    public function results($query)
+    {
+        $results = Item::search($query);
+
+        return view('item.results', compact('results'));
+    }
+
     protected function validatedData(Item $item = null)
     {
         $request = request();

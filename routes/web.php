@@ -23,6 +23,8 @@ Route::get('/', function () {
  */
 Route::get('/items', 'ItemController@index');
 Route::get('/items/create', 'ItemController@create');
+Route::get('/items/search', 'ItemController@search');
+Route::get('/items/results/{query}', 'ItemController@results');
 Route::post('/items', 'ItemController@store');
 Route::get('/items/{item}', 'ItemController@show');
 Route::get('/items/{item}/edit', 'ItemController@edit');
