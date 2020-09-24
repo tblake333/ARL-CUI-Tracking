@@ -5,10 +5,10 @@ use App\Item;
 use App\User;
 use Illuminate\Database\Seeder;
 
-class ChangeSeeder extends Seeder
+class ModificationSeeder extends Seeder
 {
     /**
-     * Run the seeder for the changes table.
+     * Run the seeder for the modifications table.
      *
      * @return void
      */
@@ -21,7 +21,7 @@ class ChangeSeeder extends Seeder
 
         foreach ($items as $item) {
             $user = $users->random();
-            $this->createChanges($item, $user);
+            $this->createModifications($item, $user);
         }
     }
 
@@ -31,7 +31,7 @@ class ChangeSeeder extends Seeder
      * @param $item
      * @param $user
      */
-    private function createChanges($item, $user)
+    private function createModifications($item, $user)
     {
         $newItem = factory(Item::class)->make();
 

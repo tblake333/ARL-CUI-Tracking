@@ -11,5 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
+mix.js([
+        'resources/js/app.js',
+        'resources/js/form-validation.js',
+        'resources/js/user-detect.js',
+        'resources/js/barcode-detect.js'], 'public/js')
     .sass('resources/sass/app.scss', 'public/css');

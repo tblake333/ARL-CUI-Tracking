@@ -1,0 +1,70 @@
+$userCardColor: #0062A3;
+$userCardTextColor: white;
+$userCardBorderColor: #131515;
+
+h1 {
+    margin-top: 40px;
+    color: $userCardTextColor;
+    text-align: center;
+    font-weight: 300;
+}
+
+.results-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    margin: 40px auto;
+    
+    .card-section {
+      padding: 0.5rem;
+      border-bottom: 1px solid $userCardBorderColor;
+  
+      &:last-child {
+          border: 0;
+      }
+
+      p {
+          color: white;
+      }
+  }
+  
+  .user-card {
+      display: flex;
+      flex-direction: column;
+      width: clamp(50ch, 100%, 90ch);
+      margin-bottom: 40px;
+      text-decoration: none;
+      background-color: $userCardColor;
+      color: $userCardTextColor;
+      font-family: "Montserrat", sans-serif;
+      padding: 0.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  }
+  
+  .user-name {
+      font-size: 1.8rem;
+  }
+  
+  .badge-info {
+      display: flex;
+      align-items: center;
+  
+      >div {
+          display: inline-grid;
+          place-items: center;
+      }
+  
+      i {
+          font-size: 1.5rem;
+      }
+  
+      >span {
+          margin-left: 8px;
+      }
+  }
+  
+}
+

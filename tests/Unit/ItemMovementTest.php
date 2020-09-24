@@ -128,4 +128,33 @@ class ItemMovementTest extends TestCase
         $item->checkIn();
     }
 
+    public function test_checked_out_items_empty_when_no_records()
+    {
+        $user = factory(User::class)->create();
+        $this->assertEmpty($user->getCheckedOutItems());
+    }
+
+    public function test_checked_out_items_not_empty_when_item_checked_out()
+    {
+        $item = factory(Item::class)->create();
+        $user = factory(User::class)->create();
+
+        // Check out item
+        $item->checkOut($user);
+        
+        $this->assertCount(1, $user->getCheckedOutItems());
+    }
+
+    public function test_checked_out_items_empty_when_item_checked_in()
+    {
+        $item = factory(Item::class)->create();
+        $user = factory(User::class)->create();
+
+        // Check out item
+        $item->checkOut($user);
+        $item->checkIn();
+        
+        $this->assertCount(0, $user->getCheckedOutItems());
+    }
+
 }

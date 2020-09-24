@@ -1,9 +1,9 @@
 
-$textColor: #f1faee;
-$backgroundColor: #1d3557;
+$textColor: #131515;
+$backgroundColor: #0062A3;
 
-$hoverTextColor: #457b9d;
-$hoverBackgroundColor: #a8dadc;
+$hoverTextColor: #131515;
+$hoverBackgroundColor: #09E85E;
 
 .navigation {
     margin: 0;
@@ -36,15 +36,18 @@ $hoverBackgroundColor: #a8dadc;
         transition: transform 0.5s ease;
     }
 }
-    
-.icon-container {
-width: 100%;
-display: grid;
-place-items: center;
-height: 2rem;
-font-size: 1.3rem;
+
+nav {
+
+    .icon-container {
+        width: 100%;
+        display: grid;
+        place-items: center;
+        height: 2rem;
+        font-size: 1.3rem;
+        }
+            
 }
-    
 .dropdown {
     position: absolute;
     width: 100%;
@@ -72,7 +75,7 @@ font-size: 1.3rem;
     text-decoration: none;
     display: flex;
     padding: 0.6rem 0;
-    border-bottom: gray 1px solid;
+    border-bottom: $textColor 1px solid;
 
     .icon-container {
         flex-basis: 30%;

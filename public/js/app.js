@@ -93,151 +93,414 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+/***/ }),
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+/***/ "./resources/js/barcode-detect.js":
+/*!****************************************!*\
+  !*** ./resources/js/barcode-detect.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+var BARCODE = {
+  PREFIX: ["Shift", "C", "Shift", "U", "Shift", "I"],
+  TERMINATOR: "Enter"
+};
+var currentPrefix = [];
+var barcode = ""; // Pre-fill barcode based on standardized prefix
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+BARCODE.PREFIX.forEach(function (key) {
+  if (key != "Shift") {
+    barcode = barcode.concat(key);
+  }
+});
+BARCODE.PREFIX_LENGTH = barcode.length;
+document.addEventListener('focusin', reset);
+document.addEventListener('keydown', barcodeListener);
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function barcodeListener(e) {
+  // Key is pressed
+  var key = e.key;
 
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+  if (key == "Enter") {
+    e.preventDefault();
+  }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  currentPrefix.push(key);
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+  if (passedPrefixLengthRequirement(currentPrefix) && arraysNotEqual(currentPrefix, BARCODE.PREFIX)) {
+    // prefix is invalid, keep reading for prefix match
+    currentPrefix.shift();
+  } else if (exceededPrefixLengthRequirement(currentPrefix)) {
+    // Prefix requirement has been fulfilled, continue reading barcode
+    // Correct currentPrefix length
+    currentPrefix.pop();
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+    if (isTerminatorKey(key)) {
+      correctCaretPosition(); // Reached barcode terminator key, finished reading barcode
 
-document.getElementById('badge_number').addEventListener('blur', validateRequired);
-document.getElementById('first_name').addEventListener('blur', validateRequired);
-document.getElementById('last_name').addEventListener('blur', validateRequired);
-document.getElementById('badge_number').addEventListener('input', validateValid);
-document.getElementById('first_name').addEventListener('input', validateValid);
-document.getElementById('last_name').addEventListener('input', validateValid);
+      setBarcodeInputValue(); // Reset barcode and prefix to read a new barcode if necessary
 
-function validateRequired(e) {
-  var input = e.target;
-
-  if (input.value.length === 0 && input.hasAttribute('required')) {
-    input.classList.add('invalid');
+      reset();
+    } else if (isSingleCharacterKey(key)) {
+      // General case
+      barcode = barcode.concat(key);
+    } else if (isNonShiftKey(key)) {
+      // Found another key while reading barcode
+      // Like the case above, this should not occur with a barcode scanner; however, it may
+      // occur when trying to emulate a barcode scanner with manual input
+      // Reset barcode and prefix
+      reset();
+    }
   }
 }
 
-function validateValid(e) {
-  var input = e.target;
+function passedPrefixLengthRequirement(prefix) {
+  return prefix.length === BARCODE.PREFIX.length;
+}
 
-  if (input.classList.contains('invalid')) {
-    input.classList.remove('invalid');
+function exceededPrefixLengthRequirement(prefix) {
+  return prefix.length === BARCODE.PREFIX.length + 1;
+}
+
+function isTerminatorKey(key) {
+  return key === BARCODE.TERMINATOR;
+}
+
+function isSingleCharacterKey(key) {
+  return key.length === 1;
+}
+
+function isNonShiftKey(key) {
+  return key != "Shift";
+}
+
+function arraysNotEqual(arr1, arr2) {
+  if (arr1 === arr2) {
+    return false;
+  }
+
+  if (arr1 == null || arr2 == null) {
+    return true;
+  }
+
+  if (arr1.length !== arr2.length) {
+    return true;
+  }
+
+  for (var i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function correctCaretPosition() {
+  var field = document.activeElement;
+
+  if (isTextInputField(field)) {
+    // Is in an input field
+    var caretPosition = field.selectionStart;
+    var text = field.value;
+    var stringBeforeBarcode = text.substring(0, caretPosition - BARCODE.LENGTH);
+    var stringAfterBarcode = text.substring(caretPosition, text.length);
+    field.value = stringBeforeBarcode + stringAfterBarcode;
+    field.selectionStart = caretPosition - BARCODE.LENGTH;
+    field.selectionEnd = caretPosition - BARCODE.LENGTH;
+    field.dispatchEvent(new CustomEvent('otherChange'));
+  } else if (isDateInputField(field)) {
+    field.value = '';
+    field.focus();
   }
 }
 
-var TypeWriter = /*#__PURE__*/function () {
-  function TypeWriter(input, list) {
-    var wait = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 3000;
+function isTextInputField(field) {
+  return field.tagName == 'INPUT' && field.getAttribute('type') == 'text' || field.tagName == 'TEXTAREA';
+}
 
-    _classCallCheck(this, TypeWriter);
+function isDateInputField(field) {
+  return field.tagName == 'INPUT' && field.getAttribute('type') == 'date';
+}
 
-    this.input = input;
-    this.current = '';
-    this.wait = parseInt(wait, 10);
-    this.isDeleting = false;
-    this.list = list;
-    this.text = this.list[Math.floor(Math.random() * this.list.length)];
+function setBarcodeInputValue() {
+  var barcodeInput = document.getElementById('barcode-input');
+  barcodeInput.value = barcode;
+  barcodeInput.dispatchEvent(new CustomEvent('otherChange'));
+  var len = location.href.length;
+
+  if (location.href.substring(len - 10).indexOf('check-out') !== -1 || location.href.substring(len - 9).indexOf('check-in') !== -1) {
+    document.getElementsByTagName('form')[0].submit();
+  }
+}
+
+function reset() {
+  barcode = barcode.substring(0, BARCODE.PREFIX_LENGTH);
+  currentPrefix = [];
+}
+
+/***/ }),
+
+/***/ "./resources/js/form-validation.js":
+/*!*****************************************!*\
+  !*** ./resources/js/form-validation.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function setupListeners() {
+  var inputs = document.getElementsByTagName('input');
+
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('blur', function () {
+      validateHelp(this);
+    });
+    inputs[i].addEventListener('input', function () {
+      validateHelp(this);
+    });
+    inputs[i].addEventListener('otherChange', function () {
+      validateHelp(this);
+    });
+  }
+}
+
+function validateHelp(inputElement) {
+  var valid = inputElement.checkValidity();
+
+  if (inputElement.name === "source_date") {
+    return;
   }
 
-  _createClass(TypeWriter, [{
-    key: "type",
-    value: function type() {
-      var _this = this;
+  if (!valid) {
+    inputElement.parentNode.parentNode.classList.add('invalid');
+  } else {
+    inputElement.parentNode.parentNode.classList.remove('invalid');
+  }
 
-      if (this.isDeleting) {
-        this.current = this.text.substring(0, this.current.length - 1);
+  if (inputElement.value.length !== 0) {
+    inputElement.parentNode.parentNode.classList.add('filled');
+  } else {
+    inputElement.parentNode.parentNode.classList.remove('filled');
+  }
+}
+
+setupListeners();
+
+/***/ }),
+
+/***/ "./resources/js/user-detect.js":
+/*!*************************************!*\
+  !*** ./resources/js/user-detect.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var badge = document.getElementById('badge_number');
+var edited = document.getElementById('edited_badge_number');
+var checkout = document.getElementById('checkout_badge_number');
+
+if (badge) {
+  badge.addEventListener('input', checkForUser);
+  badge.addEventListener('otherChange', checkForUser);
+  document.addEventListener('onload', checkForUser.call(badge));
+}
+
+if (edited) {
+  edited.addEventListener('input', checkForEdited);
+  edited.addEventListener('otherChange', checkForEdited);
+  document.addEventListener('onload', checkForEdited.call(edited));
+}
+
+if (checkout) {
+  checkout.addEventListener('input', checkForCheckOut);
+  checkout.addEventListener('otherChange', checkForCheckOut);
+  document.addEventListener('onload', checkForCheckOut.call(checkout));
+}
+
+function checkForUser(e) {
+  var xhr = new XMLHttpRequest();
+  var userDetails = document.getElementById('owner-container');
+
+  if (this.value !== '') {
+    xhr.onload = function () {
+      if (this.status === 200) {
+        var user = JSON.parse(this.responseText);
+        console.log(user);
+        removeChildren(userDetails);
+        loadUserDetails(userDetails, user);
       } else {
-        this.current = this.text.substring(0, this.current.length + 1);
+        if (!userFormExists(userDetails)) {
+          removeChildren(userDetails);
+          loadUserForm(userDetails);
+        }
       }
+    };
 
-      this.input.placeholder = this.current;
-      var speed = 400;
+    xhr.open('GET', '/api/user/' + this.value, true);
+    xhr.send();
+  }
+}
 
-      if (this.isDeleting) {
-        speed /= 4;
+function checkForEdited(e) {
+  var xhr = new XMLHttpRequest();
+  var userDetails = document.getElementById('edited-container');
+
+  if (this.value !== '') {
+    xhr.onload = function () {
+      if (this.status === 200) {
+        var user = JSON.parse(this.responseText);
+        console.log(user);
+        removeChildren(userDetails);
+        loadUserDetails(userDetails, user);
+      } else {
+        if (!userFormExists(userDetails)) {
+          removeChildren(userDetails);
+          loadEditedByForm(userDetails);
+        }
       }
+    };
 
-      if (!this.isDeleting && this.current.length === this.text.length) {
-        this.isDeleting = true;
-        speed = this.wait;
-      } else if (this.isDeleting && this.current.length === 0) {
-        this.isDeleting = false;
-        this.text = this.next();
+    xhr.open('GET', '/api/user/' + this.value, true);
+    xhr.send();
+  }
+}
+
+function checkForCheckOut(e) {
+  var xhr = new XMLHttpRequest();
+  var userDetails = document.getElementById('checkout-container');
+
+  if (this.value !== '') {
+    xhr.onload = function () {
+      if (this.status === 200) {
+        var user = JSON.parse(this.responseText);
+        console.log(user);
+        removeChildren(userDetails);
+        loadUserDetails(userDetails, user);
+      } else {
+        if (!userFormExists(userDetails)) {
+          removeChildren(userDetails);
+          loadCheckOutForm(userDetails);
+        }
       }
+    };
 
-      setTimeout(function () {
-        return _this.type();
-      }, speed);
-    }
-  }, {
-    key: "next",
-    value: function next() {
-      return this.list[Math.floor(Math.random() * this.list.length)];
-    }
-  }]);
+    xhr.open('GET', '/api/user/' + this.value, true);
+    xhr.send();
+  }
+}
 
-  return TypeWriter;
-}();
+function removeChildren(container) {
+  while (container.hasChildNodes()) {
+    container.removeChild(container.lastChild);
+  }
+}
+/* <a href="#" class="card user-card">
+            <div class="user-name card-section">
+                <span>Test Card</span>
+            </div>
+            <div class="badge-info card-section">
+                <div>
+                    <i class="fas fa-id-badge"></i>
+                </div>
+                <span>12345</span>
+            </div>
+        </a> */
 
-var DigitWriter = /*#__PURE__*/function (_TypeWriter) {
-  _inherits(DigitWriter, _TypeWriter);
 
-  var _super = _createSuper(DigitWriter);
+function loadUserDetails(container, user) {
+  var userCard = document.createElement('a');
+  userCard.href = '/users/' + user.data.badge_number;
+  userCard.classList.add('card', 'user-card');
+  userCard.innerHTML = "\n    <div class=\"user-name card-section\">\n        <span>".concat(user.data.first_name, " ").concat(user.data.last_name, "</span>\n    </div>\n    <div class=\"badge-info card-section\">\n        <div>\n            <i class=\"fas fa-id-badge\"></i>\n        </div>\n        <span>").concat(user.data.badge_number, "</span>\n    </div>");
+  container.appendChild(userCard);
+}
+/* <div class="input-item">
+        <div class="i">
+            <i class="fas fa-tag"></i>
+        </div>
+        <div>
+            <h5>Type</h5>
+            <input name="type" type="text" maxlength="30" required>
+        </div>
+    </div> */
 
-  function DigitWriter(input) {
-    var _this2;
 
-    var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3000;
+function validateHelp(inputElement) {
+  var valid = inputElement.checkValidity();
 
-    _classCallCheck(this, DigitWriter);
-
-    _this2 = _super.call(this, input, [], wait);
-    _this2.text = _this2.randDigits(Math.floor(Math.random() * 3) + 4);
-    return _this2;
+  if (inputElement.name === "source_date") {
+    return;
   }
 
-  _createClass(DigitWriter, [{
-    key: "next",
-    value: function next() {
-      return this.randDigits(Math.floor(Math.random() * 3) + 4);
-    }
-  }, {
-    key: "randDigits",
-    value: function randDigits(numDigits) {
-      var digits = '';
+  if (!valid) {
+    inputElement.parentNode.parentNode.classList.add('invalid');
+  } else {
+    inputElement.parentNode.parentNode.classList.remove('invalid');
+  }
 
-      while (numDigits--) {
-        digits += Math.floor(Math.random() * 10);
-      }
+  if (inputElement.value.length !== 0) {
+    inputElement.parentNode.parentNode.classList.add('filled');
+  } else {
+    inputElement.parentNode.parentNode.classList.remove('filled');
+  }
+}
 
-      return digits;
-    }
-  }]);
+function getInput(human_field_name, field_name) {
+  var inputItem = document.createElement('div');
+  inputItem.className = "input-item";
+  var iconContainer = document.createElement('div');
+  iconContainer.className = "i";
+  var icon = document.createElement('i');
+  icon.classList.add('fas', 'fa-id-card');
+  iconContainer.appendChild(icon);
+  var inputContainer = document.createElement('div');
+  var attributeName = document.createElement('h5');
+  attributeName.innerText = human_field_name;
+  var input = document.createElement('input');
+  input.name = field_name;
+  input.type = 'text';
+  input.maxLength = '30';
+  input.setAttribute('required', 'true');
+  input.autocomplete = 'off';
+  input.addEventListener('blur', function () {
+    validateHelp(this);
+  });
+  input.addEventListener('input', function () {
+    validateHelp(this);
+  });
+  inputContainer.appendChild(attributeName);
+  inputContainer.appendChild(input);
+  inputItem.appendChild(iconContainer);
+  inputItem.appendChild(inputContainer);
+  return inputItem;
+}
 
-  return DigitWriter;
-}(TypeWriter);
+function loadUserForm(container) {
+  var firstName = getInput('First Name', 'owner[first_name]');
+  var lastName = getInput('Last Name', 'owner[last_name]');
+  container.appendChild(firstName);
+  container.appendChild(lastName);
+}
 
-document.addEventListener('DOMContentLoaded', init);
+function loadEditedByForm(container) {
+  var firstName = getInput('First Name', 'edited_by[first_name]');
+  var lastName = getInput('Last Name', 'edited_by[last_name]');
+  container.appendChild(firstName);
+  container.appendChild(lastName);
+}
 
-function init() {
-  var firstNames = ['James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda', 'William', 'Elizabeth', 'David', 'Barbara', 'Richard', 'Susan', 'Joseph', 'Jessica', 'Thomas', 'Sarah', 'Charles', 'Karen', 'Christopher', 'Nancy', 'Daniel', 'Margaret', 'Matthew', 'Lisa', 'Anthony', 'Betty', 'Donald', 'Dorothy', 'Mark', 'Sandra', 'Paul', 'Ashley', 'Steven', 'Kimberly', 'Andrew', 'Donna', 'Kenneth', 'Emily', 'Joshua', 'Michelle', 'George', 'Carol', 'Kevin', 'Amanda', 'Brian', 'Melissa', 'Edward', 'Deborah', 'Ronald', 'Stephanie', 'Timothy', 'Rebecca', 'Jason', 'Laura', 'Jeffrey', 'Sharon', 'Ryan', 'Cynthia', 'Jacob', 'Kathleen', 'Gary', 'Helen', 'Nicholas', 'Amy', 'Eric', 'Shirley', 'Stephen', 'Angela', 'Jonathan', 'Anna', 'Larry', 'Brenda', 'Justin', 'Pamela', 'Scott', 'Nicole', 'Brandon', 'Ruth', 'Frank', 'Katherine', 'Benjamin', 'Samantha', 'Gregory', 'Christine', 'Samuel', 'Emma', 'Raymond', 'Catherine', 'Patrick', 'Debra', 'Alexander', 'Virginia', 'Jack', 'Rachel', 'Dennis', 'Carolyn', 'Jerry', 'Janet', 'Tyler', 'Maria', 'Aaron', 'Heather', 'Jose', 'Diane', 'Henry', 'Julie', 'Douglas', 'Joyce', 'Adam', 'Victoria', 'Peter', 'Kelly', 'Nathan', 'Christina', 'Zachary', 'Joan', 'Walter', 'Evelyn', 'Kyle', 'Lauren', 'Harold', 'Judith', 'Carl', 'Olivia', 'Jeremy', 'Frances', 'Keith', 'Martha', 'Roger', 'Cheryl', 'Gerald', 'Megan', 'Ethan', 'Andrea', 'Arthur', 'Hannah', 'Terry', 'Jacqueline', 'Christian', 'Ann', 'Sean', 'Jean', 'Lawrence', 'Alice', 'Austin', 'Kathryn', 'Joe', 'Gloria', 'Noah', 'Teresa', 'Jesse', 'Doris', 'Albert', 'Sara', 'Bryan', 'Janice', 'Billy', 'Julia', 'Bruce', 'Marie', 'Willie', 'Madison', 'Jordan', 'Grace', 'Dylan', 'Judy', 'Alan', 'Theresa', 'Ralph', 'Beverly', 'Gabriel', 'Denise', 'Roy', 'Marilyn', 'Juan', 'Amber', 'Wayne', 'Danielle', 'Eugene', 'Abigail', 'Logan', 'Brittany', 'Randy', 'Rose', 'Louis', 'Diana', 'Russell', 'Natalie', 'Vincent', 'Sophia', 'Philip', 'Alexis', 'Bobby', 'Lori', 'Johnny', 'Kayla', 'Bradley', 'Jane'];
-  var lastNames = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'Hernandez', 'King', 'Wright', 'Lopez', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Gonzalez', 'Nelson', 'Carter', 'Mitchell', 'Perez', 'Roberts', 'Turner', 'Phillips', 'Campbell', 'Parker', 'Evans', 'Edwards', 'Collins', 'Stewart', 'Sanchez', 'Morris', 'Rogers', 'Reed', 'Cook', 'Morgan', 'Bell', 'Murphy', 'Bailey', 'Rivera', 'Cooper', 'Richardson', 'Cox', 'Howard', 'Ward', 'Torres', 'Peterson', 'Gray', 'Ramirez', 'James', 'Watson', 'Brooks', 'Kelly', 'Sanders', 'Price', 'Bennett', 'Wood', 'Barnes', 'Ross', 'Henderson', 'Coleman', 'Jenkins', 'Perry', 'Powell', 'Long', 'Patterson', 'Hughes', 'Flores', 'Washington', 'Butler', 'Simmons', 'Foster', 'Gonzales', 'Bryant', 'Alexander', 'Russell', 'Griffin', 'Diaz', 'Hayes', 'Myers', 'Ford', 'Hamilton', 'Graham', 'Sullivan', 'Wallace', 'Woods', 'Cole', 'West', 'Jordan', 'Owens', 'Reynolds', 'Fisher', 'Ellis', 'Harrison', 'Gibson', 'Mcdonald', 'Cruz', 'Marshall', 'Ortiz', 'Gomez', 'Murray', 'Freeman', 'Wells', 'Webb', 'Simpson', 'Stevens', 'Tucker', 'Porter', 'Hunter', 'Hicks', 'Crawford', 'Henry', 'Boyd', 'Mason', 'Morales', 'Kennedy', 'Warren', 'Dixon', 'Ramos', 'Reyes', 'Burns', 'Gordon', 'Shaw', 'Holmes', 'Rice', 'Robertson', 'Hunt', 'Black', 'Daniels', 'Palmer', 'Mills', 'Nichols', 'Grant', 'Knight', 'Ferguson', 'Rose', 'Stone', 'Hawkins', 'Dunn', 'Perkins', 'Hudson', 'Spencer', 'Gardner', 'Stephens', 'Payne', 'Pierce', 'Berry', 'Matthews', 'Arnold', 'Wagner', 'Willis', 'Ray', 'Watkins', 'Olson', 'Carroll', 'Duncan', 'Snyder', 'Hart', 'Cunningham', 'Bradley', 'Lane', 'Andrews', 'Ruiz', 'Harper', 'Fox', 'Riley', 'Armstrong', 'Carpenter', 'Weaver', 'Greene', 'Lawrence', 'Elliott', 'Chavez', 'Sims', 'Austin', 'Peters', 'Kelley', 'Franklin', 'Lawson', 'Fields', 'Gutierrez', 'Ryan', 'Schmidt', 'Carr', 'Vasquez', 'Castillo', 'Wheeler', 'Chapman', 'Oliver', 'Montgomery', 'Richards', 'Williamson', 'Johnston', 'Banks', 'Meyer', 'Bishop', 'Mccoy', 'Howell', 'Alvarez', 'Morrison', 'Hansen', 'Fernandez', 'Garza', 'Harvey', 'Little', 'Burton', 'Stanley', 'Nguyen', 'George', 'Jacobs', 'Reid', 'Kim', 'Fuller', 'Lynch', 'Dean', 'Gilbert', 'Garrett', 'Romero', 'Welch', 'Larson', 'Frazier', 'Burke', 'Hanson', 'Day', 'Mendoza', 'Moreno', 'Bowman', 'Medina', 'Fowler', 'Brewer', 'Hoffman', 'Carlson', 'Silva', 'Pearson', 'Holland', 'Douglas', 'Fleming', 'Jensen', 'Vargas', 'Byrd', 'Davidson', 'Hopkins', 'May', 'Terry', 'Herrera', 'Wade', 'Soto', 'Walters', 'Curtis', 'Neal', 'Caldwell', 'Lowe', 'Jennings', 'Barnett', 'Graves', 'Jimenez', 'Horton', 'Shelton', 'Barrett', 'Obrien', 'Castro', 'Sutton', 'Gregory', 'Mckinney', 'Lucas', 'Miles', 'Craig', 'Rodriquez', 'Chambers', 'Holt', 'Lambert', 'Fletcher', 'Watts', 'Bates', 'Hale', 'Rhodes', 'Pena', 'Beck', 'Newman', 'Haynes', 'Mcdaniel', 'Mendez', 'Bush', 'Vaughn', 'Parks', 'Dawson', 'Santiago', 'Norris', 'Hardy', 'Love', 'Steele', 'Curry', 'Powers', 'Schultz', 'Barker', 'Guzman', 'Page', 'Munoz', 'Ball', 'Keller', 'Chandler', 'Weber', 'Leonard', 'Walsh', 'Lyons', 'Ramsey', 'Wolfe', 'Schneider', 'Mullins', 'Benson', 'Sharp', 'Bowen', 'Daniel', 'Barber', 'Cummings', 'Hines', 'Baldwin', 'Griffith', 'Valdez', 'Hubbard', 'Salazar', 'Reeves', 'Warner', 'Stevenson', 'Burgess', 'Santos', 'Tate', 'Cross', 'Garner', 'Mann', 'Mack', 'Moss', 'Thornton', 'Dennis', 'Mcgee', 'Farmer', 'Delgado', 'Aguilar', 'Vega', 'Glover', 'Manning', 'Cohen', 'Harmon', 'Rodgers', 'Robbins', 'Newton', 'Todd', 'Blair', 'Higgins', 'Ingram', 'Reese', 'Cannon', 'Strickland', 'Townsend', 'Potter', 'Goodwin', 'Walton', 'Rowe', 'Hampton', 'Ortega', 'Patton', 'Swanson', 'Joseph', 'Francis', 'Goodman', 'Maldonado', 'Yates', 'Becker', 'Erickson', 'Hodges', 'Rios', 'Conner', 'Adkins', 'Webster', 'Norman', 'Malone', 'Hammond', 'Flowers', 'Cobb', 'Moody', 'Quinn', 'Blake', 'Maxwell', 'Pope', 'Floyd', 'Osborne', 'Paul', 'Mccarthy', 'Guerrero', 'Lindsey', 'Estrada', 'Sandoval', 'Gibbs', 'Tyler', 'Gross', 'Fitzgerald', 'Stokes', 'Doyle', 'Sherman', 'Saunders', 'Wise', 'Colon', 'Gill', 'Alvarado', 'Greer', 'Padilla', 'Simon', 'Waters', 'Nunez', 'Ballard', 'Schwartz', 'Mcbride', 'Houston', 'Christensen', 'Klein', 'Pratt', 'Briggs', 'Parsons', 'Mclaughlin', 'Zimmerman', 'French', 'Buchanan', 'Moran', 'Copeland', 'Roy', 'Pittman', 'Brady', 'Mccormick', 'Holloway', 'Brock', 'Poole', 'Frank', 'Logan', 'Owen', 'Bass', 'Marsh', 'Drake', 'Wong', 'Jefferson', 'Park', 'Morton', 'Abbott', 'Sparks', 'Patrick', 'Norton', 'Huff', 'Clayton', 'Massey', 'Lloyd', 'Figueroa', 'Carson', 'Bowers', 'Roberson', 'Barton', 'Tran', 'Lamb', 'Harrington', 'Casey', 'Boone', 'Cortez', 'Clarke', 'Mathis', 'Singleton', 'Wilkins', 'Cain', 'Bryan', 'Underwood', 'Hogan', 'Mckenzie', 'Collier', 'Luna', 'Phelps', 'Mcguire', 'Allison', 'Bridges', 'Wilkerson', 'Nash', 'Summers', 'Atkins', 'Wilcox', 'Pitts', 'Conley', 'Marquez', 'Burnett', 'Richard', 'Cochran', 'Chase', 'Davenport', 'Hood', 'Gates', 'Clay', 'Ayala', 'Sawyer', 'Roman', 'Vazquez', 'Dickerson', 'Hodge', 'Acosta', 'Flynn', 'Espinoza', 'Nicholson', 'Monroe', 'Wolf', 'Morrow', 'Kirk', 'Randall', 'Anthony', 'Whitaker', 'Oconnor', 'Skinner', 'Ware', 'Molina', 'Kirby', 'Huffman', 'Bradford', 'Charles', 'Gilmore', 'Dominguez', 'Oneal', 'Bruce', 'Lang', 'Combs', 'Kramer', 'Heath', 'Hancock', 'Gallagher', 'Gaines', 'Shaffer', 'Short', 'Wiggins', 'Mathews', 'Mcclain', 'Fischer', 'Wall', 'Small', 'Melton', 'Hensley', 'Bond', 'Dyer', 'Cameron', 'Grimes', 'Contreras', 'Christian', 'Wyatt', 'Baxter', 'Snow', 'Mosley', 'Shepherd', 'Larsen', 'Hoover', 'Beasley', 'Glenn', 'Petersen', 'Whitehead', 'Meyers', 'Keith', 'Garrison', 'Vincent', 'Shields', 'Horn', 'Savage', 'Olsen', 'Schroeder', 'Hartman', 'Woodard', 'Mueller', 'Kemp', 'Deleon', 'Booth', 'Patel', 'Calhoun', 'Wiley', 'Eaton', 'Cline', 'Navarro', 'Harrell', 'Lester', 'Humphrey', 'Parrish', 'Duran', 'Hutchinson', 'Hess', 'Dorsey', 'Bullock', 'Robles', 'Beard', 'Dalton', 'Avila', 'Vance', 'Rich', 'Blackwell', 'York', 'Johns', 'Blankenship', 'Trevino', 'Salinas', 'Campos', 'Pruitt', 'Moses', 'Callahan', 'Golden', 'Montoya', 'Hardin', 'Guerra', 'Mcdowell', 'Carey', 'Stafford', 'Gallegos', 'Henson', 'Wilkinson', 'Booker', 'Merritt', 'Miranda', 'Atkinson', 'Orr', 'Decker', 'Hobbs', 'Preston', 'Tanner', 'Knox', 'Pacheco', 'Stephenson', 'Glass', 'Rojas', 'Serrano', 'Marks', 'Hickman', 'English', 'Sweeney', 'Strong', 'Prince', 'Mcclure', 'Conway', 'Walter', 'Roth', 'Maynard', 'Farrell', 'Lowery', 'Hurst', 'Nixon', 'Weiss', 'Trujillo', 'Ellison', 'Sloan', 'Juarez', 'Winters', 'Mclean', 'Randolph', 'Leon', 'Boyer', 'Villarreal', 'Mccall', 'Gentry', 'Carrillo', 'Kent', 'Ayers', 'Lara', 'Shannon', 'Sexton', 'Pace', 'Hull', 'Leblanc', 'Browning', 'Velasquez', 'Leach', 'Chang', 'House', 'Sellers', 'Herring', 'Noble', 'Foley', 'Bartlett', 'Mercado', 'Landry', 'Durham', 'Walls', 'Barr', 'Mckee', 'Bauer', 'Rivers', 'Everett', 'Bradshaw', 'Pugh', 'Velez', 'Rush', 'Estes', 'Dodson', 'Morse', 'Sheppard', 'Weeks', 'Camacho', 'Bean', 'Barron', 'Livingston', 'Middleton', 'Spears', 'Branch', 'Blevins', 'Chen', 'Kerr', 'Mcconnell', 'Hatfield', 'Harding', 'Ashley', 'Solis', 'Herman', 'Frost', 'Giles', 'Blackburn', 'William', 'Pennington', 'Woodward', 'Finley', 'Mcintosh', 'Koch', 'Best', 'Solomon', 'Mccullough', 'Dudley', 'Nolan', 'Blanchard', 'Rivas', 'Brennan', 'Mejia', 'Kane', 'Benton', 'Joyce', 'Buckley', 'Haley', 'Valentine', 'Maddox', 'Russo', 'Mcknight', 'Buck', 'Moon', 'Mcmillan', 'Crosby', 'Berg', 'Dotson', 'Mays', 'Roach', 'Church', 'Chan', 'Richmond', 'Meadows', 'Faulkner', 'Oneill', 'Knapp', 'Kline', 'Barry', 'Ochoa', 'Jacobson', 'Gay', 'Avery', 'Hendricks', 'Horne', 'Shepard', 'Hebert', 'Cherry', 'Cardenas', 'Mcintyre', 'Whitney', 'Waller', 'Holman', 'Donaldson', 'Cantu', 'Terrell', 'Morin', 'Gillespie', 'Fuentes', 'Tillman', 'Sanford', 'Bentley', 'Peck', 'Key', 'Salas', 'Rollins', 'Gamble', 'Dickson', 'Battle', 'Santana', 'Cabrera', 'Cervantes', 'Howe', 'Hinton', 'Hurley', 'Spence', 'Zamora', 'Yang', 'Mcneil', 'Suarez', 'Case', 'Petty', 'Gould', 'Mcfarland', 'Sampson', 'Carver', 'Bray', 'Rosario', 'Macdonald', 'Stout', 'Hester', 'Melendez', 'Dillon', 'Farley', 'Hopper', 'Galloway', 'Potts', 'Bernard', 'Joyner', 'Stein', 'Aguirre', 'Osborn', 'Mercer', 'Bender', 'Franco', 'Rowland', 'Sykes', 'Benjamin', 'Travis', 'Pickett', 'Crane', 'Sears', 'Mayo', 'Dunlap', 'Hayden', 'Wilder', 'Mckay', 'Coffey', 'Mccarty', 'Ewing', 'Cooley', 'Vaughan', 'Bonner', 'Cotton', 'Holder', 'Stark', 'Ferrell', 'Cantrell', 'Fulton', 'Lynn', 'Lott', 'Calderon', 'Rosa', 'Pollard', 'Hooper', 'Burch', 'Mullen', 'Fry', 'Riddle', 'Levy', 'David', 'Duke', 'Odonnell', 'Guy', 'Michael', 'Britt', 'Frederick', 'Daugherty', 'Berger', 'Dillard', 'Alston', 'Jarvis', 'Frye', 'Riggs', 'Chaney', 'Odom', 'Duffy', 'Fitzpatrick', 'Valenzuela', 'Merrill', 'Mayer', 'Alford', 'Mcpherson', 'Acevedo', 'Donovan', 'Barrera', 'Albert', 'Cote', 'Reilly', 'Compton', 'Raymond', 'Mooney', 'Mcgowan', 'Craft', 'Cleveland', 'Clemons', 'Wynn', 'Nielsen', 'Baird', 'Stanton', 'Snider', 'Rosales', 'Bright', 'Witt', 'Stuart', 'Hays', 'Holden', 'Rutledge', 'Kinney', 'Clements', 'Castaneda', 'Slater', 'Hahn', 'Emerson', 'Conrad', 'Burks', 'Delaney', 'Pate', 'Lancaster', 'Sweet', 'Justice', 'Tyson', 'Sharpe', 'Whitfield', 'Talley', 'Macias', 'Irwin', 'Burris', 'Ratliff', 'Mccray', 'Madden', 'Kaufman', 'Beach', 'Goff', 'Cash', 'Bolton', 'Mcfadden', 'Levine', 'Good', 'Byers', 'Kirkland', 'Kidd', 'Workman', 'Carney', 'Dale', 'Mcleod', 'Holcomb', 'England', 'Finch', 'Head', 'Burt', 'Hendrix', 'Sosa', 'Haney', 'Franks', 'Sargent', 'Nieves', 'Downs', 'Rasmussen', 'Bird', 'Hewitt', 'Lindsay', 'Le', 'Foreman', 'Valencia', 'Oneil', 'Delacruz', 'Vinson', 'Dejesus', 'Hyde', 'Forbes', 'Gilliam', 'Guthrie', 'Wooten', 'Huber', 'Barlow', 'Boyle', 'Mcmahon', 'Buckner', 'Rocha', 'Puckett', 'Langley', 'Knowles', 'Cooke', 'Velazquez', 'Whitley', 'Noel', 'Vang'];
-  new DigitWriter(document.getElementById('badge_number'), 3000).type();
-  new TypeWriter(document.getElementById('first_name'), firstNames, 3000).type();
-  new TypeWriter(document.getElementById('last_name'), lastNames, 3000).type();
+function loadCheckOutForm(container) {
+  var firstName = getInput('First Name', 'first_name');
+  var lastName = getInput('Last Name', 'last_name');
+  container.appendChild(firstName);
+  container.appendChild(lastName);
+}
+
+function userFormExists(container) {
+  return container.getElementsByTagName('input').length !== 0;
 }
 
 /***/ }),
@@ -254,13 +517,16 @@ function init() {
 /***/ }),
 
 /***/ 0:
-/*!*************************************************************!*\
-  !*** multi ./resources/js/app.js ./resources/sass/app.scss ***!
-  \*************************************************************/
+/*!**************************************************************************************************************************************************************!*\
+  !*** multi ./resources/js/app.js ./resources/js/form-validation.js ./resources/js/user-detect.js ./resources/js/barcode-detect.js ./resources/sass/app.scss ***!
+  \**************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\form-validation.js */"./resources/js/form-validation.js");
+__webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\user-detect.js */"./resources/js/user-detect.js");
+__webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\barcode-detect.js */"./resources/js/barcode-detect.js");
 module.exports = __webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\sass\app.scss */"./resources/sass/app.scss");
 
 

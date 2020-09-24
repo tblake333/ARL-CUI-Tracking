@@ -12,7 +12,7 @@
 <nav>
   <ul class="navigation">
     <li class="navigation-item">
-      <a href="#">
+      <a href="/items">
         <div class="icon-container">
           <i class="fas fa-cube"></i>
         </div>
@@ -20,25 +20,17 @@
       </a>
       <ul class="dropdown">
         <li>
-          <a href="#" class="dropdown-item">
+          <a href="/items/create" class="dropdown-item">
             <div class="icon-container">
              <i class="fas fa-plus"></i>
             </div>
             <span>Add Item</span>
           </a>
         </li>
-        <li>
-          <a href="#" class="dropdown-item">
-            <div class="icon-container">
-             <i class="fas fa-edit"></i>
-            </div>
-            <span>Edit Item</span>
-          </a>
-        </li>
       </ul>
     </li>
     <li class="navigation-item">
-      <a href="#">
+      <a href="/users">
         <div class="icon-container">
           <i class="fas fa-users"></i>
         </div>
@@ -46,25 +38,17 @@
       </a>
       <ul class="dropdown">
         <li>
-          <a href="#" class="dropdown-item">
+          <a href="/users/create" class="dropdown-item">
             <div class="icon-container">
              <i class="fas fa-user-plus"></i>
             </div>
             <span>Add User</span>
           </a>
         </li>
-        <li>
-          <a href="#" class="dropdown-item">
-            <div class="icon-container">
-             <i class="fas fa-user-edit"></i>
-            </div>
-            <span>Edit User</span>
-          </a>
-        </li>
       </ul>
     </li>
     <li class="navigation-item">
-      <a href="#">
+      <a href="/check-out">
         <div class="icon-container">
           <i class="fas fa-dolly-flatbed"></i>
         </div>
@@ -72,7 +56,7 @@
       </a>
     </li>
     <li class="navigation-item">
-      <a href="#">
+      <a href="/check-in">
         <div class="icon-container">
           <i class="fas fa-arrow-left"></i>
         </div>
@@ -80,7 +64,7 @@
       </a>
     </li>
     <li class="navigation-item">
-      <a href="#">
+      <a href="/items/search">
         <div class="icon-container">
           <i class="fas fa-search"></i>
         </div>

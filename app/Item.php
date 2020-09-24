@@ -95,6 +95,48 @@ class Item extends Model
     }
 
     /**
+     * Get the latest user to either check-in or check-out this item.
+     * 
+     * Returns null if item has never been checked-out before
+     * 
+     * @return App\User|null
+     */
+    public function getLatestUser()
+    {
+        $latestMovement = $this->movements()->latest('id')->first();
+
+        return $latestMovement ? $latestMovement->user : null;
+    }
+
+    public function getGroupedModifications()
+    {
+        $result = [];
+
+        $modifications = $this->modifications;
+        foreach ($modifications as $modification) {
+
+            // In order to ensure that a group of modifications is associated with one user at a particular time,
+            // the key to the associative array is the timestamp concatenated with '_' and the badge number
+            $key = $modification->time . '_' . $modification->badge_number;
+
+            if (array_key_exists($key, $result)) {
+
+                // Add modification to group of modifications that occurred at the same time
+                $result[$key][] = $modification;
+
+            } else {
+                // $modificationCollection is null
+                $result[$key] = [$modification];
+            }
+            
+        }
+
+        return $result;
+    }
+
+
+
+    /**
      * Function that handles owner input upon creating an item.
      * 
      * This function is called as soon as an instance of this model is created that contains the required 'owner' attribute.
@@ -144,8 +186,8 @@ class Item extends Model
         return $this->hasMany(Movement::class, 'barcode', 'barcode');
     }
 
-    public function changes()
+    public function modifications()
     {
-        return $this->hasMany(Change::class, 'item_id', 'id');
+        return $this->hasMany(Modification::class, 'item_id', 'id');
     }
 }

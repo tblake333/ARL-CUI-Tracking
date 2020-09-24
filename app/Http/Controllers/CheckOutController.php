@@ -10,10 +10,26 @@ use Illuminate\Validation\Rule;
 
 class CheckOutController extends Controller
 {
+    public function fromBarcode()
+    {
+        $request = request()->validate([
+            'barcode' => 'required|max:10'
+            ]);
+
+        $item = Item::all()->where('barcode', $request['barcode'])->first();
+
+        if ($item) {
+            return redirect()->to('/check-out/' . $item->id);
+        } else {
+            return response('Item not found', 404);
+        }
+        
+    }
+
     public function show(Item $item)
     {
         if ($item->getStatus() === 'in') {
-            return view('movement.checkout');
+            return view('movement.checkout', compact('item'));
         } else {
             return response('Item is already checked-out', 404);
         }
@@ -28,6 +44,7 @@ class CheckOutController extends Controller
 
         try {
             $item->checkOut($user);
+            return redirect()->to('/items/' . $item->id);
         } catch (Exception $e) {
             return response('Item is already checked-out', 404);
         }

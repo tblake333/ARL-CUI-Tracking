@@ -1,0 +1,276 @@
+$owned-list-background-color: #EE6352;
+$checked-out-list-background-color: #5CC8FF;
+$movements-list-background-color: #FDC149;
+$changes-list-background-color: #B6EB5C;
+
+$owned-card-color: #E93820;
+$owned-card-text-color: white;
+
+$checked-out-card-color: #00A3F5;
+$checked-out-card-text-color: white;
+
+$movement-card-color: #FDAD0D;
+$movement-card-text-color: black;
+$check-out-color: #E93820;
+$check-in-color: #02641F;
+
+$change-card-color: #88C819;
+$change-card-text-color: black;
+$old-color: #8D0106;
+$new-color: #5AC62F;
+
+$modification-card-color: #1277E2;
+
+$backgroundColor: #131515;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+
+h2.user-data {
+  text-align: center;
+  font-weight: 300;
+  color: white;
+  margin: 1rem;
+}
+
+h2.user-name {
+  font-size: 2rem;
+  margin-top: 40px;
+}
+
+.card {
+    border-radius: 1rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    transition: all 1s ease;
+    margin-bottom: 18px;
+    padding: 0.5rem;
+  
+  &:hover {
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      transform: scale(1.02);
+    }
+}
+
+.user-info {
+  display: grid;
+  grid-template-columns: 47% 47%;
+  justify-content: space-around;
+  row-gap: 3rem;
+  width: 90%;
+  margin: 40px auto;
+  
+  h3 {
+    text-align: center;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    font-weight: 300;
+    color: black;
+  }
+  
+  > div {
+    border-radius: 1rem;
+  }
+  
+  .item-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    font-size: 1.5rem;
+    
+    .item-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-bottom: 1px solid black;
+      padding: 0.3rem;
+      padding-bottom: 0.2rem;
+      font-weight: 400;
+    }
+    
+    .barcode-info {
+      padding: 0.3rem;
+      margin-top: 0.2rem;
+      display: flex;
+      align-items: center;
+    
+      i {
+        background-color: #343332;
+        border-radius: 0.5rem;
+        padding: 0.3rem;
+      }
+    
+      span {
+        margin-left: 8px;
+        font-size: 1.2rem;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem;
+  padding-top: 0.5rem;
+}
+
+.movement-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1.5rem;
+  padding-top: 0.5rem;
+  
+  .movement-card {
+    display: grid;
+    grid-template-columns: calc(100% - 14ch) 14ch;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 15px;
+  }
+  
+  .movement-info {
+    padding: 0.5rem;
+    color: $movement-card-text-color;
+    
+    .icon-container {
+      display: inline-grid;
+      place-items: center;
+      padding: 0.5rem;
+      width: 1.3rem;
+      box-sizing: initial;
+    }
+    
+    span {
+      font-weight: 400;
+    }
+  }
+}
+
+.change-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1.5rem;
+  padding-top: 0.5rem;
+  
+  .change-card {
+    display: grid;
+    grid-template-columns: calc(100% - 14ch) 14ch;
+    row-gap: 1rem;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 15px;
+  }
+  
+  .change-info {
+    padding: 0.5rem 0.5rem;
+    color: $movement-card-text-color;
+    
+    .icon-container {
+      display: inline-grid;
+      place-items: center;
+      padding: 0.5rem;
+      width: 1.3rem;
+      box-sizing: initial;
+    }
+    
+    div {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    
+    span {
+      font-weight: 400;
+    }
+  }
+}
+
+.owned {
+  background-color: $owned-list-background-color;
+  
+  .item-card {
+    background-color: $owned-card-color;
+    color: $owned-card-text-color;
+  }
+}
+
+.checked-out {
+  background-color: $checked-out-list-background-color;
+  
+  .item-card {
+    background-color: $checked-out-card-color;
+    color: $checked-out-card-text-color;
+  }
+}
+
+.checked-in {
+    background-color: $checked-out-list-background-color;
+    
+    .item-card {
+      background-color: $checked-out-card-color;
+      color: $checked-out-card-text-color;
+    }
+}
+
+.movements {
+  background-color: $movements-list-background-color;
+  grid-column: 1/3;
+  
+  .movement-card {
+    background-color: $movement-card-color;
+    color: $movement-card-text-color;
+  }
+  
+  .item-card {
+    background-color: $checked-out-card-color;
+    color: $checked-out-card-text-color;
+    margin: 0;
+  }
+  
+  .check-out {
+    color: $check-out-color;
+  }
+
+  .check-in {
+    color: $check-in-color;
+  }
+}
+
+.changes {
+  background-color: $changes-list-background-color;
+  grid-column: 1/3;
+  
+  .change-card {
+    background-color: $change-card-color;
+    color: $change-card-text-color;
+  }
+  
+  .item-card {
+    background-color: $owned-card-color;
+    color: $owned-card-text-color;
+    margin: 0;
+  }
+  
+  .old {
+    color: $old-color;
+  }
+
+  .new {
+    color: $new-color;
+  }
+}
+
+.modifications {
+  grid-column: 1/3;
+  
+  .modification-card {
+    background-color: $modification-card-color;
+  }
+}
+

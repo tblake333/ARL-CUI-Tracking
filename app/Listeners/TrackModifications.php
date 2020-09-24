@@ -7,7 +7,7 @@ use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class TrackChanges
+class TrackModifications
 {
     /**
      * Track changes of item in changes table
@@ -24,7 +24,7 @@ class TrackChanges
 
         foreach ($changes as $field => $newValue) {
             // Create new Change for each field modified
-            $item->changes()->create([
+            $item->modifications()->create([
                 'badge_number' => $user->badge_number,
                 'field' => $field,
                 'old' => $item->getOriginal()[$field],

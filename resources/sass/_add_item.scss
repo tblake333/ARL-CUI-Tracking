@@ -1,0 +1,86 @@
+form.create-item-form {
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    min-height: 80vh;
+    padding: 1.5rem;
+    color: $color;
+    font-size: 8vh;
+    font-weight: 800;
+    transition: all 1s ease;
+
+    .button {
+        display: grid;
+        place-items: center;
+
+        button {
+            font-family: inherit;
+            width: 50%;
+            font-size: 4.5vh;
+            height: 2em;
+            border: 0;
+            border-radius: 1em;
+            background-color: $buttonColor;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+    }
+}
+
+.owner-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: 0 auto;
+    
+    .card-section {
+      padding: 0.5rem;
+      border-bottom: 1px solid gray;
+  
+      &:last-child {
+          border: 0;
+      }
+  }
+  
+  .user-card {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+    text-decoration: none;
+    background-color: #0062A3;
+    color: white;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    font-size: 1rem;
+  }
+  
+  .user-name {
+      font-size: 1.8rem;
+  }
+  
+  .badge-info {
+      display: flex;
+      align-items: center;
+  
+      >div {
+          display: inline-grid;
+          place-items: center;
+      }
+  
+      i {
+          font-size: 1.5rem;
+      }
+  
+      >span {
+          margin-left: 8px;
+      }
+  }
+  
+}

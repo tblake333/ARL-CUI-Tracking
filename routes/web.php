@@ -13,10 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    // TODO: Go to menu
-    return view('welcome');
-});
+// TODO: Create menu page?
+Route::get('/', 'ItemController@index');
 
 /**
  * Item Routes
@@ -24,6 +22,7 @@ Route::get('/', function () {
 Route::get('/items', 'ItemController@index');
 Route::get('/items/create', 'ItemController@create');
 Route::get('/items/search', 'ItemController@search');
+Route::post('/items/search', 'ItemController@withQuery');
 Route::get('/items/results/{query}', 'ItemController@results');
 Route::post('/items', 'ItemController@store');
 Route::get('/items/{item}', 'ItemController@show');
@@ -42,8 +41,12 @@ Route::get('/users/{user}', 'UserController@show');
 /**
  * Movement Routes
  */
+Route::view('/check-out', 'checkout');
+Route::post('/check-out/barcode', 'CheckOutController@fromBarcode');
 Route::get('/check-out/{item}', 'CheckOutController@show');
 Route::post('/check-out/{item}', 'CheckOutController@store');
 
+Route::view('/check-in', 'checkin');
+Route::post('/check-in/barcode', 'CheckInController@fromBarcode');
 Route::get('/check-in/{item}', 'CheckInController@show');
 Route::post('/check-in/{item}', 'CheckInController@store');

@@ -1,0 +1,297 @@
+$backgroundColor: #131515;
+
+
+
+h2.item-data {
+  text-align: center;
+  font-weight: 300;
+  color: white;
+  margin: 1rem;
+}
+
+h2.item-title {
+  font-size: 2rem;
+  margin-top: 40px;
+  position: relative;
+}
+
+.item-info {
+  width: 90%;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: 47% 47%;
+  row-gap: 1rem;
+  justify-content: space-around;
+  
+  > div {
+    border-radius: 1rem;
+    
+    h3 {
+      text-align: center;
+      font-weight: 300;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+      .user-card {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: black;
+        font-size: 1.5rem;
+        width: auto;
+
+        .user-name {
+          border-bottom: 1px solid black;
+          padding: 0.3rem;
+          padding-bottom: 0.2rem;
+          font-weight: 400;
+        }
+
+        .user-badge-number {
+          padding: 0.3rem;
+          margin-top: 0.2rem;
+          display: flex;
+          align-items: center;
+
+          span {
+            font-size: 1.3rem;
+            margin-left: 8px;
+          }
+      }
+    }
+  }
+}
+
+.item-details {
+  padding: 1rem;
+  background-color: #17BEBB;
+  grid-column: 1/3;
+  display: flex;
+  flex-direction: column;
+  
+  div {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+    padding-bottom: 0.5rem;
+    margin-top: 8px;
+    
+    &:first-child {
+      margin: 0;
+    }
+    
+    &:last-child {
+      border: 0;
+    }
+    
+    span:first-child {
+      margin-left: 8px;
+      margin-right: 80px
+    }
+    span:last-child {
+      margin-right: 8px;
+      font-size: 1.5rem;
+      font-weight: 400;
+    }
+  }
+}
+
+.item-owner {
+  background-color: #F56476;
+  padding: 0.3rem 1rem;;
+  
+  .user-card {
+    background-color: #F01932;
+  }
+  
+}
+
+.item-status {
+  background-color: #FFBF47;
+  padding: 0.3rem 1rem;
+  
+  h3.checked-in {
+    color: #0E8F00;
+    background-color: transparent;
+  }
+
+  h3.checked-out {
+      color: #cf394b;
+      background-color: transparent;
+  }
+  
+  h4 {
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  
+  .user-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: black;
+    background-color: #1A87C7;
+    font-size: 1.5rem;
+    
+    .user-name {
+      border-bottom: 1px solid black;
+      padding: 0.3rem;
+      padding-bottom: 0.2rem;
+      font-weight: 400;
+    }
+    
+    .user-badge-number {
+      padding: 0.3rem;
+      margin-top: 0.2rem;
+      display: flex;
+      align-items: center;
+      
+      span {
+        font-size: 1.3rem;
+        margin-left: 8px;
+      }
+     
+    }
+    
+  }
+}
+
+.item-movements {
+  grid-column: 1/3;
+  background-color: #7773AB;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1.5rem;
+  padding-top: 0.5rem;
+  
+  .movement-card {
+    background-color: #504D80;
+    display: grid;
+    grid-template-columns: calc(100% - 14ch) 14ch;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 15px;
+    
+    .user-card {
+      background-color: #FF784F;
+      margin: 0;
+    }
+  }
+  
+  .movement-info {
+    padding: 0.5rem;
+    color: black;
+    
+    .check-out {
+      color: #DE4A3F;
+    }
+    
+    .icon-container {
+      display: inline-grid;
+      place-items: center;
+      padding: 0.5rem;
+      width: 1.3rem;
+      box-sizing: initial;
+    }
+    
+    span {
+      font-weight: 400;
+    }
+  }
+}
+
+.item-changes {
+  background-color: #91FF85;
+  grid-column: 1/3;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1.5rem;
+  padding-top: 0.5rem;
+  
+  .modifications {
+    grid-column: 1/3;
+    
+    .modification-card {
+      
+    }
+  }
+  
+  .change-card {
+    background-color: #17BEBB;
+    display: grid;
+    grid-template-columns: calc(100% - 14ch) 14ch;
+    row-gap: 1rem;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 15px;
+  }
+  
+  .user-card {
+    background-color: #FF784F;
+  }
+  
+  .modification-card {
+    background-color: #C4F5FC;
+  }
+  
+  .old {
+    color: red;
+  }
+  
+  .new {
+    color: green;
+  }
+  
+  .change-info {
+    padding: 0.5rem 0.5rem;
+    color: black;
+    
+    .icon-container {
+      display: inline-grid;
+      place-items: center;
+      padding: 0.5rem;
+      width: 1.3rem;
+      box-sizing: initial;
+    }
+    
+    div {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    
+    span {
+      font-weight: 400;
+    }
+  }
+}
+
+.card {
+    border-radius: 1rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    transition: all 1s ease;
+    margin-bottom: 18px;
+    padding: 0.5rem;
+  
+  &:hover {
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      transform: scale(1.02);
+    }
+}
+
+.edit-button {
+  position: absolute;
+  right: 5%;
+  border-radius: 50%;
+  
+  i {
+    padding: 1rem;
+    color: black;
+    background-color: #FFBF47;
+    border-radius: 50%;
+  }
+}

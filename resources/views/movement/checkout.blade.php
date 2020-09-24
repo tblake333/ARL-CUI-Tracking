@@ -1,14 +1,18 @@
 @extends('app')
 
-@section('title', 'Items')
+@section('title', 'Check-Out')
+
+@section('scripts')
+<script src="/js/app.js"></script>
+@endsection
 
 @section('content')
 
-<h1>Items</h1>
+<h1>Check-Out Confirmation</h1>
 
-<div class="items-container">
+<form action="/check-out/{{ $item->id }}" class="create-item-form" method="POST">
 
-    @forelse($items as $item)
+    <div class="item-container">
 
         <a href="/items/{{ $item->id }}" class="card item-card">
             <div class="card-top">
@@ -40,13 +44,28 @@
             </div>
         </a>
 
-    @empty
+    </div>
 
-        <p>No items to display.</p>
+    <div class="input-item">
+        <div class="i">
+            <i class="fas fa-id-badge"></i>
+        </div>
+        <div>
+            <h5>Badge #</h5>
+            <input name="badge_number" type="text" maxlength="6" id="checkout_badge_number" pattern="\d+" required>
+        </div>
+    </div>
 
-    @endforelse
+    <div class="owner-container" id="checkout-container">
 
-</div>
+    </div>
+
+    @csrf
+
+    <div class="button">
+        <button>Check-Out</button>
+    </div>
+</form>
 
 
 @endsection

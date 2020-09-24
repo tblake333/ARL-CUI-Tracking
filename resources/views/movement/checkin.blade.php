@@ -1,14 +1,14 @@
 @extends('app')
 
-@section('title', 'Items')
+@section('title', 'Check-In')
 
 @section('content')
 
-<h1>Items</h1>
+<h1>Check-In Confirmation</h1>
 
-<div class="items-container">
+<form action="/check-in/{{ $item->id }}" class="create-item-form" method="POST">
 
-    @forelse($items as $item)
+    <div class="item-container">
 
         <a href="/items/{{ $item->id }}" class="card item-card">
             <div class="card-top">
@@ -40,13 +40,28 @@
             </div>
         </a>
 
-    @empty
+    </div>
 
-        <p>No items to display.</p>
+    <div class="owner-container">
+        <a href="/users/{{ $user->badge_number }}" class="card user-card">
+            <div class="user-name card-section">
+                <span>{{ $user->first_name . ' ' . $user->last_name }}</span>
+            </div>
+            <div class="badge-info card-section">
+                <div>
+                    <i class="fas fa-id-badge"></i>
+                </div>
+                <span>{{ $user->badge_number }}</span>
+            </div>
+        </a>
+    </div>
 
-    @endforelse
+    @csrf
 
-</div>
+    <div class="button">
+        <button>Check-In</button>
+    </div>
+</form>
 
 
 @endsection

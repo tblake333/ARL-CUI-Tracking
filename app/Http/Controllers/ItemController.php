@@ -64,6 +64,12 @@ class ItemController extends Controller
         return view('item.search');
     }
 
+    public function withQuery()
+    {
+        $request = request()->validate(['query' => 'required']);
+        return redirect()->to('/items/results/' . $request['query']);
+    }
+
     public function results($query)
     {
         $results = Item::search($query);

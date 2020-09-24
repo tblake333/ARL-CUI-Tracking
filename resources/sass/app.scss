@@ -7,15 +7,27 @@
 // // Bootstrap
 // @import '~bootstrap/scss/bootstrap';
 
-@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap);
-@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap);
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+
+$backgroundColor: #131515;
 
 body {
-  background-color: #020327;
+  position: relative;
+  background-color: $backgroundColor;
   font-family: 'Montserrat', sans-serif;
   margin: 0;
   box-sizing: border-box;
 }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
 
 /*
  * Navigation styles
@@ -28,87 +40,31 @@ body {
  *  Form styles
  */
 
-form {
-  max-width: 500px;
-  margin: 50px auto;
-}
+@import 'add_user';
+@import 'add_item';
 
-form input {
-  max-width: 100%;
-  line-height: 90px;
-  outline: 0;
-  border: 0;
-  padding: 0;
-  border-bottom: 8px solid #85FFC7;
-  margin-bottom: 40px;
-  font-size: 80px;
-  background-color: transparent;
-  font-family: inherit;
-  color: #85FFC7; 
-}
+/*
+ * Index card styles
+ */
 
-form input:placeholder-shown {
-  opacity: 0.4;
-}
+@import 'user_index';
 
-form input:focus {
-  opacity: 1;
-}
+/*
+ * User Info styles
+ */
+@import 'user_info';
 
-form input:valid {
-  opacity: 1;
-}
+/*
+ * Item Info styles
+ */
+ @import 'item_info';
 
-form input:invalid {
-  color: rgba(133, 255, 199, 0.4);
-  border-bottom-color: #BB0A21;
-  box-shadow: none;
-}
+ /*
+  * Item Index styles
+  */
+@import 'item_index';
 
-form input:invalid:placeholder-shown {
-  border-bottom-color: #85FFC7;
-}
-
-form input::placeholder {
-  opacity: 0.4;
-}
-
-.invalid {
-  border-bottom-color: #BB0A21 !important;
-}
-
-form input:valid, form input:invalid, form input:focus, form input:required {
-  transition: color 0.5s ease, border-bottom-color 0.5s ease, opacity 0.5s ease;
-}
-
-label {
-  display: block;
-  color: #85FFC7;
-}
-
-.center {
-  text-align: center;
-}
-
-button {
-  margin-top: 40px;
-  border: 0;
-  outline: 0;
-  font-family: inherit;
-  font-size: 18px;
-  width: 50%;
-  height: 60px;
-  border-radius: 30px;
-  background-color: #F9DC5C;
-  color: #1F2041;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #85FFC7;
-  font-size: 20px;
-}
-
-button, button:hover {
-  transition: background-color 1s ease, font-size 1s ease;
-}
+/*
+ * Movement styles
+ */
+@import 'movement';

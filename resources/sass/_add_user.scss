@@ -1,0 +1,233 @@
+$backgroundColor: #131515;
+$color: #0099ff;
+$buttonColor: #FFD639;
+$buttonHover: #09E85E;
+
+.wave {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: -10;
+}
+
+.person {
+  position: fixed;
+  width: min-content;
+  left: 17%;
+  bottom: calc(320/1440 * 100vw * 0.8);
+  animation: bounce 4.8s ease-in-out infinite;
+  transition: all 1s ease;
+  
+  svg {
+    transform: translate(-45%, 50%);
+    width: 30vw;
+  }
+}
+
+form.create-user-form {
+    margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  width: clamp(12ch, 15ch, 65%);
+  min-width: 13ch;
+  min-height: 80vh;
+  padding: 1.5rem;
+  color: $color;
+  transform: translateX(34vw);
+  font-size: 11vh;
+  font-weight: 800;
+  transition: all 1s ease;
+  
+  .button {
+    display: grid;
+    place-items: center;
+    
+  button {
+    font-family: inherit;
+    width: 50%;
+    font-size: 3.5vh;
+    height: 2em;
+    border: 0;
+    border-radius: 1em;
+    background-color: $buttonColor;
+    transition: all 1s ease;
+    
+    &:hover {
+      cursor: pointer;
+      background-color: $buttonHover;
+    }
+  }
+    
+  }
+}
+
+.input-item {
+  display: grid;
+  grid-template-columns: 1.5em minmax(9ch, 1fr);
+  margin-bottom: 64px;
+  height: 1.3em;
+  
+  div {
+    position: relative;
+  }
+  
+  .i {
+    display: grid;
+    place-items:  center;
+    i {
+      transform-origin: top;
+    }
+  }
+  
+  input {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0; 
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    width: 100%;
+    border: 0;
+    background-color: transparent;
+    border-bottom: 8px solid $color;
+    color: $color;
+    transition: all 1s ease;
+    
+  &:invalid {
+    box-shadow: none;
+  }
+    
+  }
+  
+  &:focus-within {
+    h5 {
+      opacity: 1;
+      font-size: 3.5vh;
+      transform: translateY(-50%);
+    }
+    i {
+      animation: shake 10s ease-in-out;
+    }
+  }
+  
+  h5 {
+    border-bottom: 8px solid transparent;
+    position: absolute;
+    left: 0;
+    z-index: -1;
+    font-size: inherit;
+    opacity: 0.5;
+    transition: all 0.5s ease;
+  }
+
+  .error {
+    font-size: 1rem;
+    position: absolute;
+    color: red;
+    bottom: -2rem;
+  }
+}
+
+.input-item.filled {
+  h5 {
+      opacity: 1;
+      font-size: 3.5vh;
+      transform: translateY(-50%);
+  }
+ 
+}
+
+.input-item.invalid {
+  color: red;
+  
+  i {
+    animation: shake 10s ease-in-out  infinite;
+    animation-delay: 1s;
+  }
+  
+  input {
+    color: red;
+    border-bottom-color: red;
+  }
+}
+
+
+
+@media only screen and (max-width: 1090px) {
+  form {
+  display: flex;
+  flex-direction: column;
+    justify-content: center;
+  width: 65%;
+  min-height: 80vh;
+  padding: 1.5rem;
+  color: $color;
+  transform: translateX(0);
+  margin: 0 auto;
+  }
+  .person {
+    opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .wave {
+    display: none;
+  }
+  
+  form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  padding: 1.5rem;
+  color: $color;
+  transform: translateX(0);
+  margin: 10px auto;
+    font-size: 10vw;
+    
+    .input-item {
+      
+      margin-bottom: 14px;
+      
+      input {
+      border-bottom: 2px solid $color;        
+      }
+    }
+  }
+  .person {
+    opacity: 0;
+  }
+}
+
+
+
+
+
+@keyframes bounce {
+  50% {
+    transform: translateY(-25%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes shake {
+    2% {
+      transform: rotate(60deg);
+    }
+    4% {
+      transform: rotate(-50deg);
+    }
+    6% {
+      transform: rotate(20deg);
+    }
+    8% {
+      transform: rotate(-10deg);
+    }
+    10% {
+      transform: rotate(0);
+    }
+}

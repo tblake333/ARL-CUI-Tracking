@@ -9,4 +9,14 @@ class Movement extends Model
     protected $fillable = ['badge_number', 'type'];
 
     public $timestamps = false;
+
+    public function item()
+    {
+        return $this->belongsTo(Item::class, 'barcode', 'barcode');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'badge_number', 'badge_number');
+    }
 }

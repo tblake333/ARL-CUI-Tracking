@@ -16,7 +16,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'App\Events\ItemEditedEvent' => [
-            'App\Listeners\TrackChanges'
+            'App\Listeners\TrackModifications'
         ]
     ];
 

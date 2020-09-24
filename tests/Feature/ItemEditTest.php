@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Change;
 use App\Item;
+use App\Modification;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,9 +27,9 @@ class ItemEditTest extends TestCase
      *
      * @return void
      */
-    public function test_edit_item_required_string_changes_tracked()
+    public function test_edit_item_required_string_modifications_tracked()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
@@ -42,20 +42,20 @@ class ItemEditTest extends TestCase
             $newValue = 'modified';
             $this->patch("/items/$item->id", array_merge($this->data($item, $user), [$field => $newValue]));
 
-            // Ensure Change was tracked in changes table
-            $this->assertCount(++$count, Change::all());
-            $this->assertEquals(Change::latest('id')->first()->item_id, $item->id);
-            $this->assertEquals(Change::latest('id')->first()->badge_number, $user->badge_number);
-            $this->assertEquals(Change::latest('id')->first()->field, $field);
-            $this->assertEquals(Change::latest('id')->first()->old, $item->$field);
-            $this->assertEquals(Change::latest('id')->first()->new, $newValue);
+            // Ensure Modification was tracked in modifications table
+            $this->assertCount(++$count, Modification::all());
+            $this->assertEquals(Modification::latest('id')->first()->item_id, $item->id);
+            $this->assertEquals(Modification::latest('id')->first()->badge_number, $user->badge_number);
+            $this->assertEquals(Modification::latest('id')->first()->field, $field);
+            $this->assertEquals(Modification::latest('id')->first()->old, $item->$field);
+            $this->assertEquals(Modification::latest('id')->first()->new, $newValue);
 
             // Refresh model to update attributes in this instance
             $item->refresh();
         }
 
-        // Ensure all changes were tracked
-        $this->assertCount(count($this->requiredStringFields), Change::all());
+        // Ensure all modifications were tracked
+        $this->assertCount(count($this->requiredStringFields), Modification::all());
     }
 
     /**
@@ -63,9 +63,9 @@ class ItemEditTest extends TestCase
      *
      * @return void
      */
-    public function test_edit_item_non_required_string_changes_tracked()
+    public function test_edit_item_non_required_string_modifications_tracked()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
@@ -78,28 +78,28 @@ class ItemEditTest extends TestCase
             $newValue = 'modified';
             $this->patch("/items/$item->id", array_merge($this->data($item, $user), [$field => $newValue]));
 
-            // Ensure Change was tracked in changes table
-            $this->assertCount(++$count, Change::all());
-            $this->assertEquals(Change::latest('id')->first()->item_id, $item->id);
-            $this->assertEquals(Change::latest('id')->first()->badge_number, $user->badge_number);
-            $this->assertEquals(Change::latest('id')->first()->field, $field);
-            $this->assertEquals(Change::latest('id')->first()->old, $item->$field);
-            $this->assertEquals(Change::latest('id')->first()->new, $newValue);
+            // Ensure Modification was tracked in modifications table
+            $this->assertCount(++$count, Modification::all());
+            $this->assertEquals(Modification::latest('id')->first()->item_id, $item->id);
+            $this->assertEquals(Modification::latest('id')->first()->badge_number, $user->badge_number);
+            $this->assertEquals(Modification::latest('id')->first()->field, $field);
+            $this->assertEquals(Modification::latest('id')->first()->old, $item->$field);
+            $this->assertEquals(Modification::latest('id')->first()->new, $newValue);
 
             // Refresh model to update attributes in this instance
             $item->refresh();
         }
 
-        // Ensure all changes were tracked
-        $this->assertCount(count($this->nonRequiredStringFields), Change::all());
+        // Ensure all modifications were tracked
+        $this->assertCount(count($this->nonRequiredStringFields), Modification::all());
     }
 
     /**
      * Test basic edits tracked functionality when changing a non-required date field
      */
-    public function test_edit_item_non_required_date_changes_tracked()
+    public function test_edit_item_non_required_date_modifications_tracked()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
@@ -112,30 +112,30 @@ class ItemEditTest extends TestCase
             $newValue = Carbon::parse($item->$field)->addDay()->format('Y-m-d');
             $this->patch("/items/$item->id", array_merge($this->data($item, $user), [$field => $newValue]));
 
-            // Ensure Change was tracked in changes table
-            $this->assertCount(++$count, Change::all());
-            $this->assertEquals(Change::latest('id')->first()->item_id, $item->id);
-            $this->assertEquals(Change::latest('id')->first()->badge_number, $user->badge_number);
-            $this->assertEquals(Change::latest('id')->first()->field, $field);
-            $this->assertEquals(Change::latest('id')->first()->old, $item->$field);
-            $this->assertEquals(Change::latest('id')->first()->new, $newValue);
+            // Ensure Modification was tracked in modifications table
+            $this->assertCount(++$count, Modification::all());
+            $this->assertEquals(Modification::latest('id')->first()->item_id, $item->id);
+            $this->assertEquals(Modification::latest('id')->first()->badge_number, $user->badge_number);
+            $this->assertEquals(Modification::latest('id')->first()->field, $field);
+            $this->assertEquals(Modification::latest('id')->first()->old, $item->$field);
+            $this->assertEquals(Modification::latest('id')->first()->new, $newValue);
 
             // Refresh model to update attributes in this instance
             $item->refresh();
         }
 
-        // Ensure all changes were tracked
-        $this->assertCount(count($this->nonRequiredDateFields), Change::all());
+        // Ensure all modifications were tracked
+        $this->assertCount(count($this->nonRequiredDateFields), Modification::all());
     }
 
     /**
-     * Test multiple field changes tracked
+     * Test multiple field modifications tracked
      *
      * @return void
      */
-    public function test_multiple_changes_at_once_tracked()
+    public function test_multiple_modifications_at_once_tracked()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
@@ -149,7 +149,7 @@ class ItemEditTest extends TestCase
             'location' => $newLocation
         ]));
 
-        $this->assertCount(3, Change::all());
+        $this->assertCount(3, Modification::all());
     }
 
     /**
@@ -158,7 +158,7 @@ class ItemEditTest extends TestCase
      */
     public function test_new_user_created_if_new_edited_by_badge_number()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
         $this->assertCount(0, User::all(), 'Users table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
@@ -176,8 +176,8 @@ class ItemEditTest extends TestCase
             'title' => 'newTitle'
         ]));
 
-        // Only changed title field
-        $this->assertCount(1, Change::all());
+        // Only modificationd title field
+        $this->assertCount(1, Modification::all());
         $this->assertCount(2, User::all());
     }
 
@@ -187,7 +187,7 @@ class ItemEditTest extends TestCase
      */
     public function test_new_user_created_if_new_owner_badge_number()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
         $this->assertCount(0, User::all(), 'Users table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
@@ -210,8 +210,8 @@ class ItemEditTest extends TestCase
             'title' => 'newTitle'
         ]));
 
-        // Changed owner and title field
-        $this->assertCount(2, Change::all());
+        // Modificationd owner and title field
+        $this->assertCount(2, Modification::all());
         $this->assertCount(3, User::all());
     }
 
@@ -221,7 +221,7 @@ class ItemEditTest extends TestCase
      */
     public function test_both_new_users_created_when_new_edited_by_and_owner_badge_number()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
         $this->assertCount(0, User::all(), 'Users table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
@@ -248,14 +248,14 @@ class ItemEditTest extends TestCase
             'title' => 'newTitle'
         ]));
 
-        // Changed owner and title field
-        $this->assertCount(2, Change::all());
+        // Modificationd owner and title field
+        $this->assertCount(2, Modification::all());
         $this->assertCount(3, User::all());
     }
 
     public function test_name_fields_required_when_new_badge_number()
     {
-        $this->assertCount(0, Change::all(), 'Changes table is not empty! Be sure to use RefreshDatabase when testing.');
+        $this->assertCount(0, Modification::all(), 'Modifications table is not empty! Be sure to use RefreshDatabase when testing.');
         $this->assertCount(0, User::all(), 'Users table is not empty! Be sure to use RefreshDatabase when testing.');
 
         $item = factory(Item::class)->create();
@@ -269,7 +269,7 @@ class ItemEditTest extends TestCase
         $response->assertSessionHasErrors('edited_by.first_name');
         $response->assertSessionHasErrors('edited_by.last_name');
 
-        $this->assertCount(0, Change::all());
+        $this->assertCount(0, Modification::all());
         $this->assertCount(1, User::all());
     }
 
