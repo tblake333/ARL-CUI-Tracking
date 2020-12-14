@@ -483,6 +483,10 @@ h1 {
   margin: 40px auto;
 }
 
+.results-container p {
+  color: white;
+}
+
 .results-container .card-section {
   padding: 0.5rem;
   border-bottom: 1px solid #131515;
@@ -490,10 +494,6 @@ h1 {
 
 .results-container .card-section:last-child {
   border: 0;
-}
-
-.results-container .card-section p {
-  color: white;
 }
 
 .results-container .user-card {
@@ -1085,6 +1085,10 @@ h2.item-title {
   margin: 40px auto;
 }
 
+.items-container p {
+  color: white;
+}
+
 .items-container .item-card {
   display: flex;
   width: 80%;
@@ -1095,10 +1099,6 @@ h2.item-title {
   color: #0D141C;
   border-radius: 1rem;
   margin-bottom: 40px;
-}
-
-.items-container .item-card p {
-  color: white;
 }
 
 .items-container .item-card:hover .laser {

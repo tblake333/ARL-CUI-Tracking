@@ -4,6 +4,10 @@
     align-items: center;
     margin: 40px auto;
     
+    p {
+      color: white;
+    }
+    
     .item-card {
     display: flex;
     width: 80%;
@@ -15,9 +19,6 @@
     border-radius: 1rem;
     margin-bottom: 40px;
 
-    p {
-      color: white;
-    }
     
     
     &:hover {

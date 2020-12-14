@@ -523,11 +523,11 @@ function userFormExists(container) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\form-validation.js */"./resources/js/form-validation.js");
-__webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\user-detect.js */"./resources/js/user-detect.js");
-__webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\js\barcode-detect.js */"./resources/js/barcode-detect.js");
-module.exports = __webpack_require__(/*! C:\Users\student\Documents\cui_tracking\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\student\Documents\CUI Server\Apache24\htdocs\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! C:\Users\student\Documents\CUI Server\Apache24\htdocs\resources\js\form-validation.js */"./resources/js/form-validation.js");
+__webpack_require__(/*! C:\Users\student\Documents\CUI Server\Apache24\htdocs\resources\js\user-detect.js */"./resources/js/user-detect.js");
+__webpack_require__(/*! C:\Users\student\Documents\CUI Server\Apache24\htdocs\resources\js\barcode-detect.js */"./resources/js/barcode-detect.js");
+module.exports = __webpack_require__(/*! C:\Users\student\Documents\CUI Server\Apache24\htdocs\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

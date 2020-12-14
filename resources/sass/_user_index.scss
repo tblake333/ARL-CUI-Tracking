@@ -17,6 +17,10 @@ h1 {
     width: 80%;
     margin: 40px auto;
     
+    p {
+        color: white;
+    }
+    
     .card-section {
       padding: 0.5rem;
       border-bottom: 1px solid $userCardBorderColor;
@@ -25,9 +29,6 @@ h1 {
           border: 0;
       }
 
-      p {
-          color: white;
-      }
   }
   
   .user-card {

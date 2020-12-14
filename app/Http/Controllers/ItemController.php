@@ -67,7 +67,7 @@ class ItemController extends Controller
     public function withQuery()
     {
         $request = request()->validate(['query' => 'required']);
-        return redirect()->to('/items/results/' . $request['query']);
+        return redirect()->to('/items/results/' . urlencode($request['query']));
     }
 
     public function results($query)

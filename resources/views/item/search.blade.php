@@ -2,6 +2,10 @@
 
 @section('title', 'Search')
 
+@section('scripts')
+<script src="/js/app.js"></script>
+@endsection
+
 @section('content')
 
 <h1>Search</h1>
