@@ -29,7 +29,7 @@ class Item extends Model
         $builder = self::query();
 
         foreach (Schema::getColumnListing('items') as $field) {
-            $builder->orWhere($field, 'like', $value);
+            $builder->orWhere($field, 'like', '%' . $value . '%');
         }
 
         return $builder->get();
