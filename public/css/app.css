@@ -1065,6 +1065,7 @@ h2.item-title {
   position: absolute;
   right: 5%;
   border-radius: 50%;
+  text-decoration: none;
 }
 
 .edit-button i {
@@ -1072,6 +1073,36 @@ h2.item-title {
   color: black;
   background-color: #FFBF47;
   border-radius: 50%;
+}
+
+.edit-button span {
+  display: block;
+  font-size: 24px;
+  color: white;
+  margin-top: 8px;
+}
+
+.cancel-button {
+  position: absolute;
+  right: 5%;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+.cancel-button i {
+  padding: 1rem;
+  color: black;
+  width: 64px;
+  height: 64px;
+  background-color: #eb4527;
+  border-radius: 50%;
+}
+
+.cancel-button span {
+  display: block;
+  font-size: 24px;
+  color: white;
+  margin-top: 8px;
 }
 
 /*

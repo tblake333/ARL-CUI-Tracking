@@ -287,11 +287,42 @@ h2.item-title {
   position: absolute;
   right: 5%;
   border-radius: 50%;
+  text-decoration: none;
   
   i {
     padding: 1rem;
     color: black;
     background-color: #FFBF47;
     border-radius: 50%;
+  }
+
+  span {
+    display: block;
+    font-size: 24px;
+    color: white;
+    margin-top: 8px;
+  }
+}
+
+.cancel-button {
+  position: absolute;
+  right: 5%;
+  border-radius: 50%;
+  text-decoration: none;
+  
+  i {
+    padding: 1rem;
+    color: black;
+    width: 64px;
+    height: 64px;
+    background-color: #eb4527;
+    border-radius: 50%;
+  }
+
+  span {
+    display: block;
+    font-size: 24px;
+    color: white;
+    margin-top: 8px;
   }
 }

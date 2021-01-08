@@ -8,7 +8,12 @@
 
 @section('content')
 
-<h1>Edit Item Details</h1>
+<div class="title-container">
+    <h2 class="item-title item-data">Edit Item Details<a href="/items/{{ $item->id }}" class="cancel-button"><i
+                class="fas fa-times"></i><span>Cancel</span></a></h2>
+
+
+</div>
 
 <form action="/items/{{ $item->id }}" method="POST" class="create-item-form">
 

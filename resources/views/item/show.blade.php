@@ -6,7 +6,7 @@
 
 <div class="title-container">
     <h2 class="item-title item-data">{{ $item->title }}<a href="/items/{{ $item->id }}/edit" class="edit-button"><i
-                class="fas fa-pen"></i></a></h2>
+                class="fas fa-pen"></i><span>Edit</span></a></h2>
 
 
 </div>

@@ -42,7 +42,7 @@
             <i class="fas fa-user"></i>
         </div>
         <div>
-            <h5>Owner</h5>
+            <h5>Owner Badge #</h5>
             <input name="owner[badge_number]" value="{{ old('owner.badge_number') }}" id="badge_number" type="text" maxlength="6" pattern="\d+" required>
             @error('owner.badge_number')
                <div class="error">{{ $message }}</div>
