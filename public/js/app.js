@@ -104,44 +104,259 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var BARCODE = {
-  PREFIX: ["Shift", "C", "Shift", "U", "Shift", "I"],
-  TERMINATOR: "Enter"
-};
-var currentPrefix = [];
-var barcode = ""; // Pre-fill barcode based on standardized prefix
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-BARCODE.PREFIX.forEach(function (key) {
-  if (key != "Shift") {
-    barcode = barcode.concat(key);
-  }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var LABS = ['ATL', 'ESL', 'SISL', 'SGL'];
+var PREFIXES = [];
+var PREFIX_TERMINATOR = "END";
+var TERMINATOR = "Enter";
+var CUI_PREFIX = ["Shift", "C", "Shift", "U", "Shift", "I"];
+LABS.forEach(function (lab) {
+  // Interleave SHIFT keys between each character
+  // as that is what the barcode scanner does.
+  // Ex. ESL => SHIFT E SHIFT S SHIFT L
+  var prefix = [];
+  lab.split('').forEach(function (letter) {
+    // TODO: Only apply shifts when letter or character is upper case
+    prefix.push("Shift");
+    prefix.push(letter);
+  }); // For prefixes, include
+  // 1. The lab abbreviation + CUI
+  // 2. Just CUI
+  // 1
+
+  prefix = prefix.concat(CUI_PREFIX);
+  PREFIXES.push(prefix);
+}); // 2
+
+PREFIXES.push(CUI_PREFIX);
+
+var TrieNode = /*#__PURE__*/function () {
+  function TrieNode(key) {
+    _classCallCheck(this, TrieNode);
+
+    this.key = key;
+    this.children = new Map();
+  } // Adds a sub trie to the node,
+  // Ex. ['H', 'e', 'l', 'l', 'o']
+  // Adds 5 nodes, to create the "Hello" string trie
+
+
+  _createClass(TrieNode, [{
+    key: "addChildSubTrie",
+    value: function addChildSubTrie(arr) {
+      var current = this;
+
+      for (var i = 0; i < arr.length; i++) {
+        var key = arr[i];
+        var childNode = current.children.get(key);
+
+        if (!childNode) {
+          // Child node not found, create one
+          childNode = new TrieNode(key);
+          current.children.set(key, childNode);
+        } // Set child node to current node for next iteration
+
+
+        current = childNode;
+      }
+
+      if (current.key != PREFIX_TERMINATOR) {
+        // Add a dummy child to indicate the end of the prefix
+        // Maps to 'true' for arbitrary reasons, such as using actual child value as a boolean
+        // for checking if child exists rather than using Map.has(child)
+        current.children.set(PREFIX_TERMINATOR, true);
+      }
+    }
+  }, {
+    key: "containsSubTrie",
+    value: function containsSubTrie(arr) {
+      var current = this;
+
+      for (var i = 0; i < arr.length; i++) {
+        var _char = arr[i];
+        var node = current.children.get(_char);
+
+        if (!node) {
+          return false;
+        }
+
+        current = node;
+      }
+
+      return true;
+    }
+  }, {
+    key: "getLastSubTrieNode",
+    value: function getLastSubTrieNode(arr) {
+      var current = this;
+
+      for (var i = 0; i < arr.length; i++) {
+        var _char2 = arr[i];
+        var node = current.children.get(_char2);
+
+        if (!node) {
+          return null;
+        }
+
+        current = node;
+      }
+
+      return current;
+    }
+  }]);
+
+  return TrieNode;
+}();
+
+var PREFIX_TRIE_ROOT = new TrieNode('START');
+PREFIXES.forEach(function (prefix) {
+  PREFIX_TRIE_ROOT.addChildSubTrie(prefix);
 });
-BARCODE.PREFIX_LENGTH = barcode.length;
+var currentPrefix = [];
+var barcode = "";
+var currentTrieRoot = PREFIX_TRIE_ROOT;
 document.addEventListener('focusin', reset);
 document.addEventListener('keydown', barcodeListener);
 
 function barcodeListener(e) {
-  // Key is pressed
+  console.log('CURRENT PREFIX: ' + currentPrefix);
+  console.log('CURRENT BARCODE: ' + barcode); // Key is pressed
+
   var key = e.key;
 
   if (key == "Enter") {
     e.preventDefault();
+  } // When a key is read we care about 2 cases:
+  // 1. The key is a child of the current sub trie
+  // 2. The current sub trie has a prefix terminator child
+  // In the second case, there are two subcases which default to the same
+  // result:
+  // 2a. The key is not a child of the current sub trie: the key is not part of
+  //     the prefix, but IS part of the barcode
+  // 2b. The key is a child of the current sub trie: this means there exists
+  //     an overlapping in the prefixes, such as ABCD and ABC. In this case,
+  //     ignore the overlapping and choose the shortest prefix. That is, the
+  //     the key is not part of the prefix, but IS part of the barcode.
+  //     This case would be automatically handled by case 2a.
+  // The other case not mentioned, the case where the key is not a child
+  // and there is no prefix terminator child, indicates that the prefix
+  // is invalid, and should be truncated to the next potentially valid prefix.
+  // Get subtrie root from the current root
+
+
+  var subTrie = currentTrieRoot.children.get(key);
+
+  if (subTrie) {
+    console.log('Found child: ' + key + ' in sub trie root: ' + currentTrieRoot.key); // Key is a child of current sub trie
+
+    currentTrieRoot = subTrie;
+    currentPrefix.push(key);
+    console.log('New prefix is now: ' + currentPrefix);
+    return;
+  } else {
+    // The subtrie for this key does not exist
+    console.log('child: ' + key + ' was NOT found in sub trie root: ' + currentTrieRoot.key); // Key is not a child of the current sub trie
+
+    if (!currentPrefixTrieIsEndOfPrefix()) {
+      console.log('Prefix has not been completed yet, truncating...'); // Current prefix is not valid, so truncate until potentially valid
+
+      currentTrieRoot = PREFIX_TRIE_ROOT;
+      currentPrefix.push(key);
+
+      while (currentPrefix && currentPrefix.length != 0) {
+        console.log("Current prefix: " + currentPrefix); // Remove beginning character
+
+        currentPrefix.shift();
+        var tracingNode = currentTrieRoot;
+        var passedThrough = true;
+
+        for (var i = 0; i < currentPrefix.length; i++) {
+          var _key = currentPrefix[i];
+
+          if (hasTerminatorChildNode(tracingNode)) {
+            // Embedded prefix has been found
+            // Get rest of barcode
+            var barcodeKeys = currentPrefix.splice(i + 1);
+
+            for (var j = 0; j < barcodeKeys.length; j++) {
+              var barcodeKey = barcodeKeys[j];
+
+              if (isSingleCharacterKey(barcodeKey)) {
+                barcode = barcode.concat(barcodeKey);
+              }
+            } // Exit the for loop
+
+
+            passedThrough = false;
+            break;
+          }
+
+          if (!tracingNode.children.has(_key)) {
+            // Child not found, exit for loop
+            passedThrough = false;
+            break;
+          } // Follow through next node
+
+
+          tracingNode = tracingNode.children.get(_key);
+        } // Three cases upon exiting the for loop:
+        // 1. We went through all the elements in the prefix buffer
+        //         - We have reached a prefix which is a potential valid prefix
+        // 2. We found an embedded prefix
+        // 3. Child not found
+        //         - We have no valid prefix with current truncated buffer
+        // Only cases 1 and 2 require breaking out of the for loop
+
+
+        if (barcode != '' || passedThrough) {
+          currentTrieRoot = tracingNode;
+          break;
+        }
+
+        console.log('Current prefix: ' + currentPrefix + ' is incomplete and therefore not valid');
+      }
+
+      console.log('Reverted to prefix: ' + currentPrefix);
+
+      if (hasTerminatorChildNode(currentTrieRoot)) {
+        // Full and valid prefix was found by truncating, so begin creating barcode
+        var rawPrefix = '';
+        currentPrefix.forEach(function (key) {
+          if (isSingleCharacterKey(key)) {
+            rawPrefix = rawPrefix.concat(key);
+          }
+        });
+        barcode = barcode.concat(rawPrefix);
+        return;
+      }
+    }
   }
 
-  currentPrefix.push(key);
-
-  if (passedPrefixLengthRequirement(currentPrefix) && arraysNotEqual(currentPrefix, BARCODE.PREFIX)) {
-    // prefix is invalid, keep reading for prefix match
-    currentPrefix.shift();
-  } else if (exceededPrefixLengthRequirement(currentPrefix)) {
+  if (currentPrefixTrieIsEndOfPrefix()) {
     // Prefix requirement has been fulfilled, continue reading barcode
-    // Correct currentPrefix length
-    currentPrefix.pop();
+    console.log('PREFIX FULFILLED, reading normally');
+
+    if (barcode == '') {
+      console.log('Barcode was empty, filled it up');
+      currentPrefix.forEach(function (key) {
+        if (isSingleCharacterKey(key)) {
+          console.log('concatting ' + key + ' to barcode');
+          barcode = barcode.concat(key);
+        }
+      });
+    } // Correct currentPrefix length
+
 
     if (isTerminatorKey(key)) {
       correctCaretPosition(); // Reached barcode terminator key, finished reading barcode
 
-      setBarcodeInputValue(); // Reset barcode and prefix to read a new barcode if necessary
+      setBarcodeInputValue();
+      console.log('BARCODE DETECTED: ' + barcode); // Reset barcode and prefix to read a new barcode if necessary
 
       reset();
     } else if (isSingleCharacterKey(key)) {
@@ -157,16 +372,16 @@ function barcodeListener(e) {
   }
 }
 
-function passedPrefixLengthRequirement(prefix) {
-  return prefix.length === BARCODE.PREFIX.length;
+function currentPrefixTrieIsEndOfPrefix() {
+  return hasTerminatorChildNode(currentTrieRoot);
 }
 
-function exceededPrefixLengthRequirement(prefix) {
-  return prefix.length === BARCODE.PREFIX.length + 1;
+function hasTerminatorChildNode(node) {
+  return node.children.has(PREFIX_TERMINATOR);
 }
 
 function isTerminatorKey(key) {
-  return key === BARCODE.TERMINATOR;
+  return key === TERMINATOR;
 }
 
 function isSingleCharacterKey(key) {
@@ -175,28 +390,6 @@ function isSingleCharacterKey(key) {
 
 function isNonShiftKey(key) {
   return key != "Shift";
-}
-
-function arraysNotEqual(arr1, arr2) {
-  if (arr1 === arr2) {
-    return false;
-  }
-
-  if (arr1 == null || arr2 == null) {
-    return true;
-  }
-
-  if (arr1.length !== arr2.length) {
-    return true;
-  }
-
-  for (var i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 function correctCaretPosition() {
@@ -238,8 +431,9 @@ function setBarcodeInputValue() {
 }
 
 function reset() {
-  barcode = barcode.substring(0, BARCODE.PREFIX_LENGTH);
+  barcode = '';
   currentPrefix = [];
+  currentTrieRoot = PREFIX_TRIE_ROOT;
 }
 
 /***/ }),
