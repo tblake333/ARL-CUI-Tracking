@@ -55,10 +55,21 @@
             <input name="badge_number" type="text" maxlength="6" id="checkout_badge_number" pattern="\d+" required>
         </div>
     </div>
-
+    
     <div class="owner-container" id="checkout-container">
 
     </div>
+
+    <div class="input-item">
+        <div class="i">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div>
+            <h5>Location</h5>
+            <input name="location" type="text" maxlength="30" id="checkout_badge_number" required>
+        </div>
+    </div>
+
 
     @csrf
 

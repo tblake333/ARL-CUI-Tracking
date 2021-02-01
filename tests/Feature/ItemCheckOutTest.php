@@ -12,6 +12,7 @@ use Tests\TestCase;
 class ItemCheckOutTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * Test basic check out functionality
@@ -140,6 +141,21 @@ class ItemCheckOutTest extends TestCase
     }
 
     /**
+     * Test location requirement when checking an item
+     * 
+     * @return void
+     */
+    public function test_location_required()
+    {
+        $item = factory(Item::class)->create();
+        $user = factory(User::class)->create();
+
+        $response = $this->post("/check-out/$item->id", array_merge($this->data($user), ['location' => '']));
+
+        $response->assertSessionHasErrors('location');
+    }
+
+    /**
      * Test first name requirement when checking an item out as a new user
      * 
      * @return void
@@ -187,7 +203,9 @@ class ItemCheckOutTest extends TestCase
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
 
-        $item->checkOut($user);
+        $location = $this->faker()->word();
+
+        $item->checkOut($user, $location);
         $item->checkIn();
 
         $this->assertCount(2, Movement::all());
@@ -229,8 +247,10 @@ class ItemCheckOutTest extends TestCase
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
 
+        $location = $this->faker()->word();
+
         // Check out item
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
 
         // Ensure movement was created by check-out
         $this->assertCount(1, Movement::all());
@@ -242,6 +262,26 @@ class ItemCheckOutTest extends TestCase
 
         // Ensure movement was not created
         $this->assertCount(1, Movement::all());
+    }
+
+    /**
+     * Test an item's location being updated upon check-out
+     */
+    public function test_item_location_update_upon_check_out()
+    {
+        $this->assertCount(0, Movement::all(), 'Movement table not empty! Be sure to use RefreshDatabase when testing.');
+
+        $item = factory(Item::class)->create();
+        $user = factory(User::class)->create();
+
+        $new_loc      = $this->faker()->word() . "_new_loc";
+
+        $item->checkOut($user, $new_loc);
+
+        // Ensure movement was not created
+        $this->assertCount(1, Movement::all());
+        // Ensure current location was updated
+        $this->assertEquals($item->getCurrentLocation(), $new_loc);
     }
 
 
@@ -262,6 +302,8 @@ class ItemCheckOutTest extends TestCase
             $result['first_name'] = $user->first_name;
             $result['last_name'] = $user->last_name;
         }
+
+        $result['location'] = $this->faker()->word();
 
         return $result;
     }

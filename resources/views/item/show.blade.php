@@ -42,8 +42,19 @@
 
         <div>
             <span class="attribute-name">Location</span>
+            
             <span class="attribute-value">{{ $item->location }}</span>
         </div>
+
+        @if($item->getCurrentLocation() !== $item->location)
+
+        <div>
+            <span class="attribute-name">Current location (checked-out)</span>
+            
+            <span class="attribute-value">{{ $item->getCurrentLocation() }}</span>
+        </div>
+
+        @endif
 
         <div>
             <span class="attribute-name">Description</span>

@@ -39,17 +39,19 @@ class Item extends Model
      * Method to check-out item
      * 
      * @param App\User $user User checking item out
+     * @param App\User $location New location where the item is going
      * 
      * @return void
      * 
      * @throws Exception if item is already checked-out
      */
-    public function checkOut($user)
+    public function checkOut($user, $location)
     {
         if ($this->getStatus() === 'in') {
             $this->movements()->create([
                 'badge_number' => $user->badge_number,
-                'type' => 'out'
+                'type' => 'out',
+                'location' => $location
             ]);
         } else {
             // Item is already checked-out, so check-out request cannot take place
@@ -106,6 +108,23 @@ class Item extends Model
         $latestMovement = $this->movements()->latest('id')->first();
 
         return $latestMovement ? $latestMovement->user : null;
+    }
+
+    /**
+     * Get the current location of this item.
+     * 
+     * Returns the default location assigned to this item if it is checked-in,
+     * returns the location entered when checking out the item if it is checked-out.
+     * 
+     * @return String
+     */
+    public function getCurrentLocation()
+    {
+        $latestMovement = $this->movements()->latest('id')->first();
+
+        $isCheckedOut = $latestMovement && $latestMovement->type === 'out';
+
+        return $isCheckedOut ? $latestMovement->location : $this->location;
     }
 
     public function getGroupedModifications()

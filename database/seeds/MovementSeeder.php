@@ -3,9 +3,12 @@
 use App\Item;
 use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class MovementSeeder extends Seeder
 {
+    use WithFaker;
+    
     /**
      * Run the seeder for the movements table.
      *
@@ -35,7 +38,8 @@ class MovementSeeder extends Seeder
 
             if ($item->getStatus() === 'in') {
                 $user = $users->random();
-                $item->checkOut($user);
+                $location = $this->faker()->word();
+                $item->checkOut($user, $location);
             } else {
                 $item->checkIn();
             }

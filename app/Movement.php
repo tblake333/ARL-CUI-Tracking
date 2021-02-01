@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Movement extends Model
 {
-    protected $fillable = ['badge_number', 'type'];
+    protected $fillable = ['badge_number', 'type', 'location'];
 
     public $timestamps = false;
 

@@ -12,6 +12,7 @@ use Tests\TestCase;
 class ItemCheckInTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * A basic check in functionality
@@ -26,7 +27,9 @@ class ItemCheckInTest extends TestCase
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
 
-        $item->checkOut($user);
+        $location = $this->faker()->word();
+
+        $item->checkOut($user, $location);
 
         $this->assertCount(1, Movement::all());
 
@@ -86,8 +89,11 @@ class ItemCheckInTest extends TestCase
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
 
+        $location = $this->faker()->word();
+
         // Check out item
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
+
         $item->checkIn();
 
         // Ensure movements were created by check-out and check-in events

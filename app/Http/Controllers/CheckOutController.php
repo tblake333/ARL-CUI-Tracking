@@ -37,13 +37,16 @@ class CheckOutController extends Controller
 
     public function store(Item $item)
     {
-        $userData = $this->validatedData();
+
+        $data = $this->validatedData();
+        $userData = $this->extractUserData($data);
 
         // Either get the existing user, or create the user if new
         $user = User::firstOrCreate($userData);
+        $location = $data['location'];
 
         try {
-            $item->checkOut($user);
+            $item->checkOut($user, $location);
             return redirect()->to('/items/' . $item->id);
         } catch (Exception $e) {
             return response('Item is already checked-out', 404);
@@ -68,6 +71,17 @@ class CheckOutController extends Controller
                     return !(bool)$user;
                 }), 'nullable', 'alpha', 'max:70'
             ],
+            'location' => 'required|max:30'
         ]);
+    }
+
+    private function extractUserData($arr)
+    {
+        $result = array('badge_number' => $arr['badge_number']);
+        if (array_key_exists('first_name', $arr) && array_key_exists('last_name', $arr)) {
+            $result['first_name'] = $arr['first_name'];
+            $result['last_name'] = $arr['last_name'];
+        }
+        return $result;
     }
 }

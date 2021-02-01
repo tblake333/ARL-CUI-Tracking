@@ -7,11 +7,13 @@ use App\Movement;
 use App\User;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ItemMovementTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * Test checkOut() method
@@ -23,10 +25,12 @@ class ItemMovementTest extends TestCase
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
 
+        $location = $this->faker()->word();
+
         // Ensure movement table is empty
         $this->assertCount(0, Movement::all(), 'Movement table is not empty! Be sure to use RefreshDatabase when testing.');
 
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
 
         $this->assertCount(1, Movement::all());
         $this->assertEquals(Movement::first()->barcode, $item->barcode);
@@ -44,10 +48,12 @@ class ItemMovementTest extends TestCase
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
 
+        $location = $this->faker()->word();
+
         // Ensure movement table is empty
         $this->assertCount(0, Movement::all(), 'Movement table is not empty! Be sure to use RefreshDatabase when testing.');
 
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
         $item->checkIn();
 
         $this->assertCount(2, Movement::all());
@@ -72,8 +78,9 @@ class ItemMovementTest extends TestCase
     {
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
+        $location = $this->faker()->word();
 
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
 
         $this->assertEquals('out', $item->getStatus());
     }
@@ -82,8 +89,9 @@ class ItemMovementTest extends TestCase
     {
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
+        $location = $this->faker()->word();
 
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
         $item->checkIn();
 
         $this->assertEquals('in', $item->getStatus());
@@ -108,9 +116,10 @@ class ItemMovementTest extends TestCase
         
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
+        $location = $this->faker()->word();
 
-        $item->checkOut($user);
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
+        $item->checkOut($user, $location);
     }
 
     /**
@@ -122,8 +131,9 @@ class ItemMovementTest extends TestCase
         
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
+        $location = $this->faker()->word();
 
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
         $item->checkIn();
         $item->checkIn();
     }
@@ -138,9 +148,10 @@ class ItemMovementTest extends TestCase
     {
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
+        $location = $this->faker()->word();
 
         // Check out item
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
         
         $this->assertCount(1, $user->getCheckedOutItems());
     }
@@ -149,9 +160,10 @@ class ItemMovementTest extends TestCase
     {
         $item = factory(Item::class)->create();
         $user = factory(User::class)->create();
+        $location = $this->faker()->word();
 
         // Check out item
-        $item->checkOut($user);
+        $item->checkOut($user, $location);
         $item->checkIn();
         
         $this->assertCount(0, $user->getCheckedOutItems());
