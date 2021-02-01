@@ -110,6 +110,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+// TODO: Test this with unit tests
 var LABS = ['ATL', 'ESL', 'SISL', 'SGL'];
 var PREFIXES = [];
 var PREFIX_TERMINATOR = "END";
@@ -224,9 +225,7 @@ document.addEventListener('focusin', reset);
 document.addEventListener('keydown', barcodeListener);
 
 function barcodeListener(e) {
-  console.log('CURRENT PREFIX: ' + currentPrefix);
-  console.log('CURRENT BARCODE: ' + barcode); // Key is pressed
-
+  // Key is pressed
   var key = e.key;
 
   if (key == "Enter") {
@@ -252,25 +251,20 @@ function barcodeListener(e) {
   var subTrie = currentTrieRoot.children.get(key);
 
   if (subTrie) {
-    console.log('Found child: ' + key + ' in sub trie root: ' + currentTrieRoot.key); // Key is a child of current sub trie
-
+    // Key is a child of current sub trie
     currentTrieRoot = subTrie;
     currentPrefix.push(key);
-    console.log('New prefix is now: ' + currentPrefix);
     return;
   } else {
     // The subtrie for this key does not exist
-    console.log('child: ' + key + ' was NOT found in sub trie root: ' + currentTrieRoot.key); // Key is not a child of the current sub trie
-
+    // Key is not a child of the current sub trie
     if (!currentPrefixTrieIsEndOfPrefix()) {
-      console.log('Prefix has not been completed yet, truncating...'); // Current prefix is not valid, so truncate until potentially valid
-
+      // Current prefix is not valid, so truncate until potentially valid
       currentTrieRoot = PREFIX_TRIE_ROOT;
       currentPrefix.push(key);
 
       while (currentPrefix && currentPrefix.length != 0) {
-        console.log("Current prefix: " + currentPrefix); // Remove beginning character
-
+        // Remove beginning character
         currentPrefix.shift();
         var tracingNode = currentTrieRoot;
         var passedThrough = true;
@@ -317,11 +311,7 @@ function barcodeListener(e) {
           currentTrieRoot = tracingNode;
           break;
         }
-
-        console.log('Current prefix: ' + currentPrefix + ' is incomplete and therefore not valid');
       }
-
-      console.log('Reverted to prefix: ' + currentPrefix);
 
       if (hasTerminatorChildNode(currentTrieRoot)) {
         // Full and valid prefix was found by truncating, so begin creating barcode
@@ -339,13 +329,9 @@ function barcodeListener(e) {
 
   if (currentPrefixTrieIsEndOfPrefix()) {
     // Prefix requirement has been fulfilled, continue reading barcode
-    console.log('PREFIX FULFILLED, reading normally');
-
     if (barcode == '') {
-      console.log('Barcode was empty, filled it up');
       currentPrefix.forEach(function (key) {
         if (isSingleCharacterKey(key)) {
-          console.log('concatting ' + key + ' to barcode');
           barcode = barcode.concat(key);
         }
       });
@@ -355,8 +341,7 @@ function barcodeListener(e) {
     if (isTerminatorKey(key)) {
       correctCaretPosition(); // Reached barcode terminator key, finished reading barcode
 
-      setBarcodeInputValue();
-      console.log('BARCODE DETECTED: ' + barcode); // Reset barcode and prefix to read a new barcode if necessary
+      setBarcodeInputValue(); // Reset barcode and prefix to read a new barcode if necessary
 
       reset();
     } else if (isSingleCharacterKey(key)) {
