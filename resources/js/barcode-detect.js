@@ -1,4 +1,11 @@
-// TODO: Test this with unit tests
+
+/*
+    Barcode detection on a site
+
+    Author: Tristan Blake
+
+*/
+
 const LABS = ['ATL', 'ESL', 'SISL', 'SGL'];
 
 const PREFIXES = [];
