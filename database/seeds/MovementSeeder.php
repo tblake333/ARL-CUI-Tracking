@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 class MovementSeeder extends Seeder
 {
     use WithFaker;
-    
+
     /**
      * Run the seeder for the movements table.
      *
@@ -33,12 +33,13 @@ class MovementSeeder extends Seeder
      */
     private function createMovements($items, $users, $amount)
     {
+        $faker = Faker\Factory::create();
         for ($i = 0; $i < $amount; $i++) {
             $item = $items->random();
 
             if ($item->getStatus() === 'in') {
                 $user = $users->random();
-                $location = $this->faker()->word();
+                $location = $faker->word();
                 $item->checkOut($user, $location);
             } else {
                 $item->checkIn();
